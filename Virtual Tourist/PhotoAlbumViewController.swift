@@ -45,7 +45,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         let firstPredicate = NSPredicate(format: "latitude == \(self.latitude)")
         
         let secondPredicate = NSPredicate(format: "longitude == \(self.longitude)")
-        //
+        
         request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
         
         //        request.predicate = NSPredicate(format: "latitude == %f", latitude)
@@ -53,18 +53,40 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         do {
             
             let results = try context.executeFetchRequest(request)
+            //            print(results)
             
             if results.count > 0 {
                 for result in results as! [NSManagedObject] {
-//                    print(result.valueForKey("photos"))
+                    //                    print(result.valueForKey("photos") )
+                    //
+                    
+                    
+                    let photos =  result.valueForKey("photos")?.allObjects as! NSArray
+                    
+                    for photo in photos {
+                        print(photo.valueForKey("imageURL")!)
+                        
+                        
+                        
+                        
+                        NSOperationQueue.mainQueue().addOperationWithBlock({
+                            self.items.append(photo.valueForKey("imageURL")! as! String)
+                            self.do_collection_refresh()
+                        })
+                        
+                    }
+                    
+                    
+                    
+                    
                 }
             }
-//            
-//            print(results)
+            
+            
         } catch {
             print("Fetch Failed")
         }
-
+        
         
         // Find the Pin to which the images should be downloaded and associated with
         
@@ -96,51 +118,54 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         
         let roundLatitude = round(latitude * 100 )/100
         let roundLongitude = round(longitude * 100 )/100
-        // Fetch Flickr pictures baesd on geolocation
-        let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=20")! ;
         
         
-        let task = NSURLSession.sharedSession().dataTaskWithURL(url){(data, response, error) -> Void in
-            if let data = data {
-                //                print(urlContent)
-                
-                do {
-                    let jsonResult =  try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
-                    
-                    if jsonResult.count > 0 {
-                        if let items = jsonResult["photos"] as? NSDictionary {
-                            
-                            if let photoItems = items["photo"] as? NSArray {
-                                
-                                for item in photoItems {
-                                    
-                                    if let imageURL = item["url_s"] as? String {
-                                        
-                                        
-                                        
-                                        NSOperationQueue.mainQueue().addOperationWithBlock({
-                                            self.items.append(imageURL)
-                                            
-                                            self.do_collection_refresh()
-                                        })
-                                        
-                                        
-                                        
-                                        
-                                    }
-                                }
-                            }
-                        }
-                    }
-                  
-                    
-                    
-                } catch {
-                    print("JSON Serialization failed")
-                }
-            }
-        }
-        task.resume()
+        
+        //        // Fetch Flickr pictures baesd on geolocation
+        //        let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=20")! ;
+        //
+        //
+        //        let task = NSURLSession.sharedSession().dataTaskWithURL(url){(data, response, error) -> Void in
+        //            if let data = data {
+        //                //                print(urlContent)
+        //
+        //                do {
+        //                    let jsonResult =  try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
+        //
+        //                    if jsonResult.count > 0 {
+        //                        if let items = jsonResult["photos"] as? NSDictionary {
+        //
+        //                            if let photoItems = items["photo"] as? NSArray {
+        //
+        //                                for item in photoItems {
+        //
+        //                                    if let imageURL = item["url_s"] as? String {
+        //
+        //
+        //
+        //                                        NSOperationQueue.mainQueue().addOperationWithBlock({
+        //                                            self.items.append(imageURL)
+        //
+        //                                            self.do_collection_refresh()
+        //                                        })
+        //
+        //
+        //
+        //
+        //                                    }
+        //                                }
+        //                            }
+        //                        }
+        //                    }
+        //
+        //
+        //
+        //                } catch {
+        //                    print("JSON Serialization failed")
+        //                }
+        //            }
+        //        }
+        //        task.resume()
     }
     
     func do_collection_refresh()
