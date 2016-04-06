@@ -8,10 +8,18 @@
 
 import UIKit
 import CoreData
+import MapKit
+import CoreLocation
 
-class FetchImages: UIViewController {
+class FetchImages: UIViewController, MKMapViewDelegate {
+    
     
     func fetchImages (latitude: Double, longitude: Double){
+        
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let context: NSManagedObjectContext = appDel.managedObjectContext
+        
         let roundLatitude = round(latitude * 100 )/100
         let roundLongitude = round(longitude * 100 )/100
         // Fetch Flickr pictures baesd on geolocation
@@ -34,47 +42,70 @@ class FetchImages: UIViewController {
                                     
                                     if let imageURL = item["url_s"] as? String {
                                         //
-                                        print(imageURL)
+//                                        print(imageURL)
                                         
                                         NSOperationQueue.mainQueue().addOperationWithBlock({
-//                                            self.items.append(imageURL)
-                                            
-                                            let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                                            
-                                            let context: NSManagedObjectContext = appDel.managedObjectContext
+                                            //                                            self.items.append(imageURL)
                                             
                                             
-                                            var newLocation = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
+                                           
+                                            // Find the Pin to which the images should be downloaded and associated with
+                                            let request = NSFetchRequest(entityName: "Pin")
+                                            //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
                                             
-                                            newLocation.setValue(imageURL, forKey: "imageURL")
                                             
-    
+                                            let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
+                                            
+                                            let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
+                                            
+                                            
+                                            //
+                                            request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
+                                            
+                                            do {
+                                                
+                                                let results = try context.executeFetchRequest(request)
+                                                
+                                                if results.count > 0 {
+                                                    for result in results as! [NSManagedObject] {
+                                                        
+                                                            let newPhoto = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
+                                                            
+                                                            newPhoto.setValue(imageURL, forKey: "imageURL")
+//                                                            result.valueForKey("photos")!.addObject(newPhoto)
+                                                        
+                                                  
+                                                        
+                                                        let photo = result.mutableSetValueForKey("photos")
+                                                        
+                                                        photo.addObject(newPhoto)                                                    }
+                                                    
+                                                
+                                                }
+                                                
+                                            } catch {
+                                                
+                                            }
+                                            
+                                            
                                             do {
                                                 try context.save()
                                             } catch {
                                                 print("There was a problem saving")
                                             }
-
                                             
-//                                            self.do_collection_refresh()
+                                            
+                                            //                                            self.do_collection_refresh()
                                         })
                                         
                                         
                                         
-                                        
-                                    }
+                                                                            }
                                 }
                             }
                         }
                     }
-                    //                    print(jsonResult)
-                    
-                    
-//                    print("Looping through array")
-//                    for x in self.items {
-//                        print(x)
-//                    }
-                    
+                   
                     
                     
                 } catch {
@@ -83,6 +114,6 @@ class FetchImages: UIViewController {
             }
         }
         task.resume()
-
+        
     }
 }

@@ -10,8 +10,11 @@
 import UIKit
 import MapKit
 import CoreLocation
+import CoreData
 
 class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate  {
+    
+    
     var latitude : Double = 0
     var longitude : Double = 0
     
@@ -30,8 +33,41 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
+        let context: NSManagedObjectContext = appDel.managedObjectContext
+        
+        
+        let request = NSFetchRequest(entityName: "Pin")
+        
+        request.returnsObjectsAsFaults = false
+        
+        let firstPredicate = NSPredicate(format: "latitude == \(self.latitude)")
+        
+        let secondPredicate = NSPredicate(format: "longitude == \(self.longitude)")
+        //
+        request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
+        
+        //        request.predicate = NSPredicate(format: "latitude == %f", latitude)
+        
+        do {
+            
+            let results = try context.executeFetchRequest(request)
+            
+            if results.count > 0 {
+                for result in results as! [NSManagedObject] {
+//                    print(result.valueForKey("photos"))
+                }
+            }
+//            
+//            print(results)
+        } catch {
+            print("Fetch Failed")
+        }
 
+        
+        // Find the Pin to which the images should be downloaded and associated with
+        
         
         //        print(roundLatitude)
         //        print(roundLongitude)
@@ -79,31 +115,24 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                                 for item in photoItems {
                                     
                                     if let imageURL = item["url_s"] as? String {
-                                        //
-                                                                                print(imageURL)
+                                        
+                                        
                                         
                                         NSOperationQueue.mainQueue().addOperationWithBlock({
                                             self.items.append(imageURL)
                                             
-                                             self.do_collection_refresh()
+                                            self.do_collection_refresh()
                                         })
                                         
                                         
                                         
-                                       
+                                        
                                     }
                                 }
                             }
                         }
                     }
-                    //                    print(jsonResult)
-                    
-                    
-                    print("Looping through array")
-                    for x in self.items {
-                        print(x)
-                    }
-                    
+                  
                     
                     
                 } catch {
