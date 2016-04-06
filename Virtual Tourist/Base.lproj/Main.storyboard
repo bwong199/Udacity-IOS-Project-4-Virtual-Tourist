@@ -50,10 +50,10 @@
             </objects>
             <point key="canvasLocation" x="293" y="463"/>
         </scene>
-        <!--Detail View Controller-->
+        <!--Photo Album View Controller-->
         <scene sceneID="agc-2R-eeg">
             <objects>
-                <viewController id="cU0-7P-h7G" customClass="DetailViewController" customModule="Virtual_Tourist" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="cU0-7P-h7G" customClass="PhotoAlbumViewController" customModule="Virtual_Tourist" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="snE-OL-2hm"/>
                         <viewControllerLayoutGuide type="bottom" id="vzT-mx-GdN"/>
@@ -68,25 +68,31 @@
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Sch-nr-rwN">
                                 <rect key="frame" x="0.0" y="228" width="600" height="372"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="EcL-b5-2oX">
-                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="itemSize" width="100" height="100"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cell" id="uXc-4t-sKZ" customClass="MyCollectionViewCell" customModule="Virtual_Tourist" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y8g-lO-Cdj">
-                                                    <rect key="frame" x="-95" y="-39" width="240" height="128"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="y8g-lO-Cdj">
+                                                    <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                                 </imageView>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="y8g-lO-Cdj" secondAttribute="trailing" id="GBA-oY-xNY"/>
+                                            <constraint firstItem="y8g-lO-Cdj" firstAttribute="leading" secondItem="uXc-4t-sKZ" secondAttribute="leading" id="Iqh-Rh-kta"/>
+                                            <constraint firstItem="y8g-lO-Cdj" firstAttribute="top" secondItem="uXc-4t-sKZ" secondAttribute="top" id="aZU-Rj-HYn"/>
+                                            <constraint firstAttribute="bottom" secondItem="y8g-lO-Cdj" secondAttribute="bottom" id="cqg-kr-hUS"/>
+                                        </constraints>
                                         <connections>
                                             <outlet property="myImage" destination="y8g-lO-Cdj" id="Wpl-dJ-ICq"/>
                                         </connections>
@@ -100,15 +106,14 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="Pb2-VC-S6b" secondAttribute="trailing" id="1pf-H7-Y1t"/>
-                            <constraint firstItem="Sch-nr-rwN" firstAttribute="trailing" secondItem="Pb2-VC-S6b" secondAttribute="trailing" id="MGs-Fe-o05"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="trailing" secondItem="Sch-nr-rwN" secondAttribute="trailing" id="Ihf-KN-W4k"/>
+                            <constraint firstItem="vzT-mx-GdN" firstAttribute="top" secondItem="Pb2-VC-S6b" secondAttribute="bottom" constant="370" id="RNE-cP-0Wx"/>
                             <constraint firstItem="Sch-nr-rwN" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" constant="164" id="UP4-gw-uA7"/>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" id="YoQ-7d-14K"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="Sch-nr-rwN" secondAttribute="leading" id="Wda-Tj-Pro"/>
+                            <constraint firstAttribute="trailing" secondItem="Pb2-VC-S6b" secondAttribute="trailing" id="XJS-ub-p2w"/>
                             <constraint firstItem="Sch-nr-rwN" firstAttribute="bottom" secondItem="vzT-mx-GdN" secondAttribute="top" id="fP4-dQ-FnY"/>
-                            <constraint firstItem="Sch-nr-rwN" firstAttribute="leading" secondItem="Pb2-VC-S6b" secondAttribute="leading" id="nza-4N-FHT"/>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" id="pj7-aw-eGV"/>
-                            <constraint firstItem="vzT-mx-GdN" firstAttribute="top" secondItem="Pb2-VC-S6b" secondAttribute="bottom" constant="370" id="uum-IC-la4"/>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="W6l-rX-0E4" secondAttribute="leading" id="ydD-b1-xv2"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" id="fXH-qQ-Qhm"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="W6l-rX-0E4" secondAttribute="leading" id="xMr-hG-G2g"/>
                         </constraints>
                     </view>
                     <connections>

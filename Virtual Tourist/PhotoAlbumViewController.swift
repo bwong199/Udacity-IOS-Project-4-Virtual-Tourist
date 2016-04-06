@@ -11,14 +11,14 @@ import UIKit
 import MapKit
 import CoreLocation
 
-class DetailViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate  {
+class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate  {
     var latitude : Double = 0
     var longitude : Double = 0
     
     @IBOutlet var mapView: MKMapView!
     
     @IBOutlet var collectionView: UICollectionView!
-
+    
     
     let reuseIdentifier = "cell" // also enter this string as the cell identifier in the storyboard
     //        var items = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48"]
@@ -30,14 +30,11 @@ class DetailViewController: UIViewController, UICollectionViewDataSource, UIColl
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //        print(latitude)
-        //        print(longitude)
         
-        let roundLatitude = round(latitude * 100 )/100
-        let roundLongitude = round(longitude * 100 )/100
+
         
-        print(roundLatitude)
-        print(roundLongitude)
+        //        print(roundLatitude)
+        //        print(roundLongitude)
         
         let latitudeAnn:CLLocationDegrees = self.latitude
         let longitudeAnn:CLLocationDegrees = self.longitude
@@ -61,11 +58,11 @@ class DetailViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         mapView.setRegion(region, animated: true)
         
-        
+        let roundLatitude = round(latitude * 100 )/100
+        let roundLongitude = round(longitude * 100 )/100
         // Fetch Flickr pictures baesd on geolocation
-        let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1")! ;
+        let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=20")! ;
         
-        print(url)
         
         let task = NSURLSession.sharedSession().dataTaskWithURL(url){(data, response, error) -> Void in
             if let data = data {
@@ -83,9 +80,17 @@ class DetailViewController: UIViewController, UICollectionViewDataSource, UIColl
                                     
                                     if let imageURL = item["url_s"] as? String {
                                         //
-                                        //                                        print(imageURL)
+                                                                                print(imageURL)
                                         
-                                        self.items.append(imageURL)
+                                        NSOperationQueue.mainQueue().addOperationWithBlock({
+                                            self.items.append(imageURL)
+                                            
+                                             self.do_collection_refresh()
+                                        })
+                                        
+                                        
+                                        
+                                       
                                     }
                                 }
                             }
@@ -93,8 +98,8 @@ class DetailViewController: UIViewController, UICollectionViewDataSource, UIColl
                     }
                     //                    print(jsonResult)
                     
-                    self.do_collection_refresh()
                     
+                    print("Looping through array")
                     for x in self.items {
                         print(x)
                     }
@@ -121,7 +126,7 @@ class DetailViewController: UIViewController, UICollectionViewDataSource, UIColl
         return self.items.count
     }
     
-    // make a cell for each cell index path
+    //     make a cell for each cell index path
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
         // get a reference to our storyboard cell
@@ -140,6 +145,25 @@ class DetailViewController: UIViewController, UICollectionViewDataSource, UIColl
         cell.backgroundColor = UIColor.yellowColor() // make cell more visible in our example project
         
         return cell
+    }
+    
+    func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+        // get a reference to our storyboard cell
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MyCollectionViewCell
+        
+        // Use the outlet in our custom class to get a reference to the UILabel in the cell
+        //                cell.myLabel.text = self.items[indexPath.item]
+        
+        
+        if let url  = NSURL(string: self.items[indexPath.item] ),
+            data = NSData(contentsOfURL: url)
+        {
+            cell.myImage.image = UIImage(data: data)
+        }
+        
+        cell.backgroundColor = UIColor.yellowColor() // make cell more visible in our example project
+        
+        //        return cell
     }
     
     // MARK: - UICollectionViewDelegate protocol

@@ -9,11 +9,14 @@
 import UIKit
 import MapKit
 import CoreLocation
+import CoreData
 
 class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
     
     var latitude : Double = 0
     var longitude : Double = 0
+    
+    var fetchImagesInstance : FetchImages!
     
     @IBOutlet var map: MKMapView!
     
@@ -21,35 +24,14 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     var selectedPin: CLLocationCoordinate2D? = nil
     
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.map.delegate = self
         
-//        locationManager.delegate = self
-//        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-//        
-//        locationManager.requestWhenInUseAuthorization()
-//        
-//        locationManager.startUpdatingLocation()
-//        
-//        let latitude:CLLocationDegrees = 51.03
-//        
-//        let longitude:CLLocationDegrees = -114.14
-//        
-//        let latDelta:CLLocationDegrees = 0.01
-//        
-//        let lonDelta:CLLocationDegrees = 0.01
-//        
-//        let span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)
-//        
-//        let location:CLLocationCoordinate2D = CLLocationCoordinate2DMake(latitude, longitude)
-//        
-//        let region:MKCoordinateRegion = MKCoordinateRegionMake(location, span)
-//        
-//        map.setRegion(region, animated: false)
-        
-        
+
         
         let uilpgr = UILongPressGestureRecognizer(target: self, action: "action:")
         
@@ -58,6 +40,39 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         uilpgr.minimumPressDuration = 0.8
         
         map.addGestureRecognizer(uilpgr)
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        let request = NSFetchRequest(entityName: "Pin")
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let context: NSManagedObjectContext = appDel.managedObjectContext
+        do {
+            let results = try context.executeFetchRequest(request)
+            
+            if results.count > 0 {
+                for result in results as! [NSManagedObject]{
+                    print(result.valueForKey("latitude")!)
+                    print(result.valueForKey("longitude")!)
+                    
+                    let latitudeAnn:CLLocationDegrees = Double(result.valueForKey("latitude")! as! NSNumber)
+                    let longitudeAnn:CLLocationDegrees = Double(result.valueForKey("longitude")! as! NSNumber)
+                    
+                    let location:CLLocationCoordinate2D = CLLocationCoordinate2DMake(latitudeAnn, longitudeAnn)
+                    
+                    let annotation = MKPointAnnotation()
+                    
+                    annotation.coordinate = location
+                    
+                    self.map.addAnnotation(annotation)
+                }
+            }
+//            
+//            print(results)
+            
+        } catch {
+            print("There was a problem!")
+        }
     }
     
     
@@ -77,6 +92,25 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         annotation.subtitle = "\(newCoordinate.latitude)  \(newCoordinate.longitude)"
         
         annotation.coordinate = newCoordinate
+        
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let context: NSManagedObjectContext = appDel.managedObjectContext
+        
+        // fetch image
+        fetchImagesInstance.fetchImages(newCoordinate.latitude, longitude: newCoordinate.longitude)
+        
+        var newLocation = NSEntityDescription.insertNewObjectForEntityForName("Pin", inManagedObjectContext: context)
+        
+        newLocation.setValue(newCoordinate.latitude, forKey: "latitude")
+        
+        newLocation.setValue(newCoordinate.longitude, forKey: "longitude")
+        
+        do {
+            try context.save()
+        } catch {
+            print("There was a problem")
+        }
         
         map.addAnnotation(annotation)
         
@@ -117,7 +151,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         let coordinates = String((view.annotation!.coordinate))
         
-//        print(coordinates)
+        //        print(coordinates)
         
         self.latitude = view.annotation!.coordinate.latitude
         self.longitude = view.annotation!.coordinate.longitude
@@ -135,7 +169,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "toLocationDetail" )
         {
-            let detailController = segue.destinationViewController as! DetailViewController
+            let detailController = segue.destinationViewController as! PhotoAlbumViewController
             
             detailController.latitude = self.latitude
             detailController.longitude = self.longitude
