@@ -292,8 +292,55 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         //            self.selectedCell.append(indexPath.item)
         //        }
         
-        items.removeAtIndex(indexPath.item)
-        self.collectionView.reloadData()
+//        items.removeAtIndex(indexPath.item)
+//        self.collectionView.reloadData()
+        
+        
+        // Find the Pin to which the images should be downloaded and associated with
+        let request = NSFetchRequest(entityName: "Pin")
+        //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
+        
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let context: NSManagedObjectContext = appDel.managedObjectContext
+        
+        let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
+        
+        let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
+        
+        request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
+        
+        do {
+            
+            let results = try context.executeFetchRequest(request)
+            
+            if results.count > 0 {
+                for result in results as! [NSManagedObject] {
+                    let photos =  result.valueForKey("photos")?.allObjects as! NSArray
+
+                    print(photos[indexPath.item])
+                    
+                    photos[indexPath.item].setValue(nil, forKey: "imageURL")
+                    
+//                    let newPhoto = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
+//                    
+//                    newPhoto.setValue(imageURL, forKey: "imageURL")
+//                    //                                                            result.valueForKey("photos")!.addObject(newPhoto)
+//                    
+//                    let photo = result.mutableSetValueForKey("photos")
+//                    photo.addObject(newPhoto)   
+//                    print(result)
+                }
+            }
+            
+        } catch {
+            
+        }
+        do {
+            try context.save()
+        } catch {
+            print("There was a problem saving")
+        }
         
         //        if selectedCell  > 0 {
         //            toolbarButton.title = "Remove Item"
@@ -318,11 +365,11 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     }
     
 //    func fetchNewCollection (latitude: Double, longitude: Double){
-//        
+//
 //        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-//        
+//
 //        let context: NSManagedObjectContext = appDel.managedObjectContext
-//        
+//
 //        let roundLatitude = round(latitude * 100 )/100
 //        let roundLongitude = round(longitude * 100 )/100
 //        
