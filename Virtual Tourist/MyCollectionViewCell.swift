@@ -10,7 +10,31 @@ import UIKit
 
 class MyCollectionViewCell: UICollectionViewCell {
     
-
+//
+//    @IBOutlet var spinner: UIActivityIndicatorView!
 
     @IBOutlet var myImage: UIImageView!
+//    
+//    override func awakeFromNib() {
+//        super.awakeFromNib()
+//        
+//        updateWithImage(nil)
+//    }
+//    
+//    override func prepareForReuse() {
+//        super.prepareForReuse()
+//        
+//        updateWithImage(nil)
+//    }
+//    
+//    func updateWithImage(image: UIImage?) {
+//        if let imageToDisplay = image {
+//            spinner.stopAnimating()
+//            myImage.image = imageToDisplay
+//        }
+//        else {
+//            spinner.startAnimating()
+//            myImage.image = nil
+//        }
+//    }
    }

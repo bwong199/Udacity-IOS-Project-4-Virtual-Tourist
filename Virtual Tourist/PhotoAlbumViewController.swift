@@ -17,7 +17,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     
     var latitude : Double = 0
     var longitude : Double = 0
-//    var selectedCell: [Int] =  []
+    //    var selectedCell: [Int] =  []
     
     var selectedCell: Int = 0
     
@@ -49,10 +49,10 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 
                 if results.count > 0 {
                     for result in results as! [NSManagedObject] {
-                    
+                        
                         
                         result.setValue(nil, forKey: "photos")
-//                                                                           }
+                        //                                                                           }
                     }
                     
                     do {
@@ -66,13 +66,16 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             } catch {
                 
             }
+            
+            
+            
+            print(latitude)
+            print(longitude)
+            self.items.removeAll()
+            FetchImages().fetchImages(latitude, longitude: longitude)
+            
 
-            
-            let fetchImagesInstance : FetchImages = FetchImages()
-            
-            fetchImagesInstance.fetchImages(latitude, longitude: longitude)
-            refresh_data()
-            self.do_collection_refresh()
+
         }
         
         if toolbarButton.title == "Remove Item" {
@@ -122,7 +125,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         mapView.setRegion(region, animated: true)
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
-     
+            
             self.refresh_data()
         })
         
@@ -140,6 +143,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         
         
     }
+    
+    
     
     func refresh_data(){
         let qualityOfServiceClass = QOS_CLASS_BACKGROUND
@@ -183,15 +188,15 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                                 print(photo.valueForKey("imageURL")!)
                                 
                                 
-                                NSOperationQueue.mainQueue().addOperationWithBlock({
-                                    self.items.append(photo.valueForKey("imageURL")! as! String)
-                                    self.do_collection_refresh()
-                                })
+                                //                                NSOperationQueue.mainQueue().addOperationWithBlock({
+                                
+                                self.items.append(photo.valueForKey("imageURL")! as! String)
+                                self.do_collection_refresh()
+                                //                                })
                             }
                         } else {
-                            let fetchImagesInstance : FetchImages = FetchImages()
                             
-                            fetchImagesInstance.fetchImages(self.latitude, longitude: self.longitude)
+                            FetchImages().fetchImages(self.latitude, longitude: self.longitude)
                         }
                     }
                 }
@@ -208,7 +213,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 self.do_collection_refresh()
             })
         })
-
+        
     }
     
     func do_collection_refresh()
@@ -228,7 +233,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         
         // get a reference to our storyboard cell
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MyCollectionViewCell
-        
+        cell.layer.shouldRasterize = true
+        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         // Use the outlet in our custom class to get a reference to the UILabel in the cell
         //                cell.myLabel.text = self.items[indexPath.item]
         
@@ -237,6 +243,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             data = NSData(contentsOfURL: url)
         {
             cell.myImage.image = UIImage(data: data)
+            cell.layer.shouldRasterize = true
+            cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         }
         
         cell.backgroundColor = UIColor.yellowColor() // make cell more visible in our example project
@@ -247,7 +255,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
         // get a reference to our storyboard cell
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MyCollectionViewCell
-        
+        cell.layer.shouldRasterize = true
+        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         // Use the outlet in our custom class to get a reference to the UILabel in the cell
         //                cell.myLabel.text = self.items[indexPath.item]
         
@@ -255,7 +264,10 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         if let url  = NSURL(string: self.items[indexPath.item] ),
             data = NSData(contentsOfURL: url)
         {
+            
             cell.myImage.image = UIImage(data: data)
+            cell.layer.shouldRasterize = true
+            cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         }
         
         cell.backgroundColor = UIColor.yellowColor() // make cell more visible in our example project
@@ -269,40 +281,94 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         // handle tap events
         
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MyCollectionViewCell
-
+        cell.layer.shouldRasterize = true
+        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         
-//        print("You selected cell #\(indexPath.item)!")
-//        
-//        if self.selectedCell.contains(indexPath.item){
-//            print("Item already added")
-//        } else {
-//            self.selectedCell.append(indexPath.item)
-//        }
+        //        print("You selected cell #\(indexPath.item)!")
+        //
+        //        if self.selectedCell.contains(indexPath.item){
+        //            print("Item already added")
+        //        } else {
+        //            self.selectedCell.append(indexPath.item)
+        //        }
         
         items.removeAtIndex(indexPath.item)
         self.collectionView.reloadData()
         
-//        if selectedCell  > 0 {
-//            toolbarButton.title = "Remove Item"
-//        }
+        //        if selectedCell  > 0 {
+        //            toolbarButton.title = "Remove Item"
+        //        }
         
-//        let selectCell:UICollectionViewCell = collectionView.cellForItemAtIndexPath(indexPath)!
-//        selectCell.contentView.backgroundColor = UIColor.whiteColor()
+        //        let selectCell:UICollectionViewCell = collectionView.cellForItemAtIndexPath(indexPath)!
+        //        selectCell.contentView.backgroundColor = UIColor.whiteColor()
         
     }
     
     func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
-//        
-//        let cellToDeSelect:UICollectionViewCell = collectionView.cellForItemAtIndexPath(indexPath)!
-//        
-//        cellToDeSelect.contentView.backgroundColor = UIColor.clearColor()
+        //
+        //        let cellToDeSelect:UICollectionViewCell = collectionView.cellForItemAtIndexPath(indexPath)!
+        //
+        //        cellToDeSelect.contentView.backgroundColor = UIColor.clearColor()
         
-//        
-//        if selectedCell.count > 0 {
-//                    selectedCell.removeAtIndex(indexPath.item)
-//        }
-
+        //
+        //        if selectedCell.count > 0 {
+        //                    selectedCell.removeAtIndex(indexPath.item)
+        //        }
+        
     }
+    
+//    func fetchNewCollection (latitude: Double, longitude: Double){
+//        
+//        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+//        
+//        let context: NSManagedObjectContext = appDel.managedObjectContext
+//        
+//        let roundLatitude = round(latitude * 100 )/100
+//        let roundLongitude = round(longitude * 100 )/100
+//        
+//        // generate a random number per page
+//        let myRandom = arc4random_uniform(10) + 1
+//        
+//        // Fetch Flickr pictures baesd on geolocation
+//        let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=10&page=\(myRandom)")! ;
+//        
+//        
+//        let task = NSURLSession.sharedSession().dataTaskWithURL(url){(data, response, error) -> Void in
+//            if let data = data {
+//                //                print(urlContent)
+//                
+//                do {
+//                    let jsonResult =  try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
+//                    
+//                    if jsonResult.count > 0 {
+//                        
+//                        if let items = jsonResult["photos"] as? NSDictionary {
+//                            
+//                            print(items["pages"])
+//                            
+//                            if let photoItems = items["photo"] as? NSArray {
+//                                
+//                                for item in photoItems {
+//                                    
+//                                    if let imageURL = item["url_s"] as? String {
+//                                        self.items.append(imageURL)
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                    
+//                    
+//                    
+//                } catch {
+//                    print("JSON Serialization failed")
+//                }
+//            }
+//        }
+//        task.resume()
+//        
+//    }
+    
     
     
 }
