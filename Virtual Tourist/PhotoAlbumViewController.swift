@@ -17,6 +17,69 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     
     var latitude : Double = 0
     var longitude : Double = 0
+//    var selectedCell: [Int] =  []
+    
+    var selectedCell: Int = 0
+    
+    @IBOutlet var toolbarButton: UIBarButtonItem!
+    
+    
+    @IBAction func toolbarButtonAction(sender: AnyObject) {
+        
+        // on New Collection button pressed, delete the results in "photos" and do a new fetch
+        if toolbarButton.title ==  "New Collection" {
+            let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            
+            let context: NSManagedObjectContext = appDel.managedObjectContext
+            
+            let request = NSFetchRequest(entityName: "Pin")
+            //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
+            
+            
+            let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
+            
+            let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
+            
+            //
+            request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
+            do {
+                let results = try context.executeFetchRequest(request)
+                
+                print(results)
+                
+                if results.count > 0 {
+                    for result in results as! [NSManagedObject] {
+                    
+                        
+                        result.setValue(nil, forKey: "photos")
+//                                                                           }
+                    }
+                    
+                    do {
+                        try context.save()
+                    } catch {
+                        print("There was a problem saving")
+                    }
+                    
+                }
+                
+            } catch {
+                
+            }
+
+            
+            let fetchImagesInstance : FetchImages = FetchImages()
+            
+            fetchImagesInstance.fetchImages(latitude, longitude: longitude)
+            refresh_data()
+            self.do_collection_refresh()
+        }
+        
+        if toolbarButton.title == "Remove Item" {
+            
+        }
+    }
+    
     
     @IBOutlet var mapView: MKMapView!
     
@@ -30,69 +93,11 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     var items : [String] = []
     
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        let context: NSManagedObjectContext = appDel.managedObjectContext
-        
-        
-        let request = NSFetchRequest(entityName: "Pin")
-        
-        request.returnsObjectsAsFaults = false
-        
-        let firstPredicate = NSPredicate(format: "latitude == \(self.latitude)")
-        
-        let secondPredicate = NSPredicate(format: "longitude == \(self.longitude)")
-        
-        request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
-        
-        //        request.predicate = NSPredicate(format: "latitude == %f", latitude)
-        
-        do {
-            
-            let results = try context.executeFetchRequest(request)
-            //            print(results)
-            
-            if results.count > 0 {
-                for result in results as! [NSManagedObject] {
-                    //                    print(result.valueForKey("photos") )
-                    //
-                    
-                    
-                    let photos =  result.valueForKey("photos")?.allObjects as! NSArray
-                    
-                    for photo in photos {
-                        print(photo.valueForKey("imageURL")!)
-                        
-                        
-                        
-                        
-                        NSOperationQueue.mainQueue().addOperationWithBlock({
-                            self.items.append(photo.valueForKey("imageURL")! as! String)
-                            self.do_collection_refresh()
-                        })
-                        
-                    }
-                    
-                    
-                    
-                    
-                }
-            }
-            
-            
-        } catch {
-            print("Fetch Failed")
-        }
-        
-        
-        // Find the Pin to which the images should be downloaded and associated with
-        
-        
-        //        print(roundLatitude)
-        //        print(roundLongitude)
+        toolbarButton.title = "New Collection"
         
         let latitudeAnn:CLLocationDegrees = self.latitude
         let longitudeAnn:CLLocationDegrees = self.longitude
@@ -116,56 +121,94 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         
         mapView.setRegion(region, animated: true)
         
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+     
+            self.refresh_data()
+        })
+        
+        
+        // Find the Pin to which the images should be downloaded and associated with
+        
+        
+        //        print(roundLatitude)
+        //        print(roundLongitude)
+        
+        
+        
         let roundLatitude = round(latitude * 100 )/100
         let roundLongitude = round(longitude * 100 )/100
         
         
-        
-        //        // Fetch Flickr pictures baesd on geolocation
-        //        let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=20")! ;
-        //
-        //
-        //        let task = NSURLSession.sharedSession().dataTaskWithURL(url){(data, response, error) -> Void in
-        //            if let data = data {
-        //                //                print(urlContent)
-        //
-        //                do {
-        //                    let jsonResult =  try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
-        //
-        //                    if jsonResult.count > 0 {
-        //                        if let items = jsonResult["photos"] as? NSDictionary {
-        //
-        //                            if let photoItems = items["photo"] as? NSArray {
-        //
-        //                                for item in photoItems {
-        //
-        //                                    if let imageURL = item["url_s"] as? String {
-        //
-        //
-        //
-        //                                        NSOperationQueue.mainQueue().addOperationWithBlock({
-        //                                            self.items.append(imageURL)
-        //
-        //                                            self.do_collection_refresh()
-        //                                        })
-        //
-        //
-        //
-        //
-        //                                    }
-        //                                }
-        //                            }
-        //                        }
-        //                    }
-        //
-        //
-        //
-        //                } catch {
-        //                    print("JSON Serialization failed")
-        //                }
-        //            }
-        //        }
-        //        task.resume()
+    }
+    
+    func refresh_data(){
+        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+        dispatch_async(backgroundQueue, {
+            print("This is run on the background queue")
+            
+            let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            
+            let context: NSManagedObjectContext = appDel.managedObjectContext
+            
+            
+            let request = NSFetchRequest(entityName: "Pin")
+            
+            request.returnsObjectsAsFaults = false
+            
+            let firstPredicate = NSPredicate(format: "latitude == \(self.latitude)")
+            
+            let secondPredicate = NSPredicate(format: "longitude == \(self.longitude)")
+            
+            request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
+            
+            //        request.predicate = NSPredicate(format: "latitude == %f", latitude)
+            
+            do {
+                
+                let results = try context.executeFetchRequest(request)
+                //            print(results)
+                
+                if results.count > 0 {
+                    for result in results as! [NSManagedObject] {
+                        //                    print(result.valueForKey("photos") )
+                        //
+                        
+                        
+                        let photos =  result.valueForKey("photos")?.allObjects as! NSArray
+                        
+                        
+                        if photos.count > 0 {
+                            for photo in photos {
+                                print(photo.valueForKey("imageURL")!)
+                                
+                                
+                                NSOperationQueue.mainQueue().addOperationWithBlock({
+                                    self.items.append(photo.valueForKey("imageURL")! as! String)
+                                    self.do_collection_refresh()
+                                })
+                            }
+                        } else {
+                            let fetchImagesInstance : FetchImages = FetchImages()
+                            
+                            fetchImagesInstance.fetchImages(self.latitude, longitude: self.longitude)
+                        }
+                    }
+                }
+                
+                
+            } catch {
+                print("Fetch Failed")
+            }
+            
+            
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                print("This is run on the main queue, after the previous code in outer block")
+                
+                self.do_collection_refresh()
+            })
+        })
+
     }
     
     func do_collection_refresh()
@@ -224,7 +267,41 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         // handle tap events
-        print("You selected cell #\(indexPath.item)!")
+        
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MyCollectionViewCell
+
+        
+//        print("You selected cell #\(indexPath.item)!")
+//        
+//        if self.selectedCell.contains(indexPath.item){
+//            print("Item already added")
+//        } else {
+//            self.selectedCell.append(indexPath.item)
+//        }
+        
+        items.removeAtIndex(indexPath.item)
+        self.collectionView.reloadData()
+        
+//        if selectedCell  > 0 {
+//            toolbarButton.title = "Remove Item"
+//        }
+        
+//        let selectCell:UICollectionViewCell = collectionView.cellForItemAtIndexPath(indexPath)!
+//        selectCell.contentView.backgroundColor = UIColor.whiteColor()
+        
+    }
+    
+    func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
+//        
+//        let cellToDeSelect:UICollectionViewCell = collectionView.cellForItemAtIndexPath(indexPath)!
+//        
+//        cellToDeSelect.contentView.backgroundColor = UIColor.clearColor()
+        
+//        
+//        if selectedCell.count > 0 {
+//                    selectedCell.removeAtIndex(indexPath.item)
+//        }
+
     }
     
     

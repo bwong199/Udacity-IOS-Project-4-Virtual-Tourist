@@ -97,8 +97,6 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             
             let roundLatitude = round(newCoordinate.latitude * 100 )/100
             let roundLongitude = round(newCoordinate.longitude * 100 )/100
-//            print(roundLatitude)
-//            print(roundLongitude)
             
             
             let fetchImagesInstance : FetchImages = FetchImages()

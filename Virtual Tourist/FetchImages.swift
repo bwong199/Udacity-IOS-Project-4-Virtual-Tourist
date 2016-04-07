@@ -22,8 +22,12 @@ class FetchImages: UIViewController, MKMapViewDelegate {
         
         let roundLatitude = round(latitude * 100 )/100
         let roundLongitude = round(longitude * 100 )/100
+        
+        // generate a random number per page
+        let myRandom = arc4random_uniform(10) + 1
+        
         // Fetch Flickr pictures baesd on geolocation
-        let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=20")! ;
+        let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=10&page=\(myRandom)")! ;
         
         
         let task = NSURLSession.sharedSession().dataTaskWithURL(url){(data, response, error) -> Void in
@@ -34,7 +38,10 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                     let jsonResult =  try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
                     
                     if jsonResult.count > 0 {
+    
                         if let items = jsonResult["photos"] as? NSDictionary {
+                            
+                            print(items["pages"])
                             
                             if let photoItems = items["photo"] as? NSArray {
                                 
@@ -74,8 +81,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                             newPhoto.setValue(imageURL, forKey: "imageURL")
 //                                                            result.valueForKey("photos")!.addObject(newPhoto)
                                                         
-                                                  
-                                                        
+                                                                                            
                                                         let photo = result.mutableSetValueForKey("photos")
                                                         
                                                         photo.addObject(newPhoto)                                                    }

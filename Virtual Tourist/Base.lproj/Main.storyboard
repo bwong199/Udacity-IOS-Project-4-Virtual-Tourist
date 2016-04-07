@@ -63,10 +63,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Pb2-VC-S6b">
-                                <rect key="frame" x="0.0" y="64" width="600" height="166"/>
+                                <rect key="frame" x="0.0" y="64" width="600" height="173"/>
                             </mapView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Sch-nr-rwN">
-                                <rect key="frame" x="0.0" y="228" width="600" height="372"/>
+                                <rect key="frame" x="0.0" y="228" width="600" height="328"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="EcL-b5-2oX">
                                     <size key="itemSize" width="100" height="100"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -88,10 +88,10 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="y8g-lO-Cdj" secondAttribute="trailing" id="GBA-oY-xNY"/>
-                                            <constraint firstItem="y8g-lO-Cdj" firstAttribute="leading" secondItem="uXc-4t-sKZ" secondAttribute="leading" id="Iqh-Rh-kta"/>
-                                            <constraint firstItem="y8g-lO-Cdj" firstAttribute="top" secondItem="uXc-4t-sKZ" secondAttribute="top" id="aZU-Rj-HYn"/>
-                                            <constraint firstAttribute="bottom" secondItem="y8g-lO-Cdj" secondAttribute="bottom" id="cqg-kr-hUS"/>
+                                            <constraint firstAttribute="bottom" secondItem="y8g-lO-Cdj" secondAttribute="bottom" id="HcH-v5-doz"/>
+                                            <constraint firstAttribute="trailing" secondItem="y8g-lO-Cdj" secondAttribute="trailing" id="YUG-24-tjr"/>
+                                            <constraint firstItem="y8g-lO-Cdj" firstAttribute="leading" secondItem="uXc-4t-sKZ" secondAttribute="leading" id="q8h-dI-hJk"/>
+                                            <constraint firstItem="y8g-lO-Cdj" firstAttribute="top" secondItem="uXc-4t-sKZ" secondAttribute="top" id="sI7-Rj-ClA"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="myImage" destination="y8g-lO-Cdj" id="Wpl-dJ-ICq"/>
@@ -106,19 +106,29 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="trailing" secondItem="Sch-nr-rwN" secondAttribute="trailing" id="Ihf-KN-W4k"/>
-                            <constraint firstItem="vzT-mx-GdN" firstAttribute="top" secondItem="Pb2-VC-S6b" secondAttribute="bottom" constant="370" id="RNE-cP-0Wx"/>
-                            <constraint firstItem="Sch-nr-rwN" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" constant="164" id="UP4-gw-uA7"/>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="Sch-nr-rwN" secondAttribute="leading" id="Wda-Tj-Pro"/>
-                            <constraint firstAttribute="trailing" secondItem="Pb2-VC-S6b" secondAttribute="trailing" id="XJS-ub-p2w"/>
-                            <constraint firstItem="Sch-nr-rwN" firstAttribute="bottom" secondItem="vzT-mx-GdN" secondAttribute="top" id="fP4-dQ-FnY"/>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" id="fXH-qQ-Qhm"/>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="W6l-rX-0E4" secondAttribute="leading" id="xMr-hG-G2g"/>
+                            <constraint firstAttribute="trailing" secondItem="Pb2-VC-S6b" secondAttribute="trailing" id="OtV-AV-8VN"/>
+                            <constraint firstItem="Sch-nr-rwN" firstAttribute="bottom" secondItem="vzT-mx-GdN" secondAttribute="top" id="Sx3-dx-jWt"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="W6l-rX-0E4" secondAttribute="leading" id="W2p-fS-JYU"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="Sch-nr-rwN" secondAttribute="leading" id="ZtB-o6-qjG"/>
+                            <constraint firstItem="vzT-mx-GdN" firstAttribute="top" secondItem="Pb2-VC-S6b" secondAttribute="bottom" constant="319" id="pZ1-u8-2xr"/>
+                            <constraint firstItem="Sch-nr-rwN" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" constant="164" id="pxs-Rc-pap"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="trailing" secondItem="Sch-nr-rwN" secondAttribute="trailing" id="uar-Ns-4kr"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" id="wOE-d7-1U7"/>
                         </constraints>
                     </view>
+                    <toolbarItems>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="0XZ-cQ-IAm"/>
+                        <barButtonItem title="Item" id="igN-7r-eat">
+                            <connections>
+                                <action selector="toolbarButtonAction:" destination="cU0-7P-h7G" id="6Ej-bj-j0p"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="f9X-Yi-vaS"/>
+                    </toolbarItems>
                     <connections>
                         <outlet property="collectionView" destination="Sch-nr-rwN" id="kqV-Be-23d"/>
                         <outlet property="mapView" destination="Pb2-VC-S6b" id="TzL-lb-7Iu"/>
+                        <outlet property="toolbarButton" destination="igN-7r-eat" id="Vkk-sE-gVE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cqT-EO-aJu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -128,13 +138,17 @@
         <!--Navigation Controller-->
         <scene sceneID="uax-36-E4S">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="WPv-EH-nia" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" toolbarHidden="NO" id="WPv-EH-nia" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="5V4-yL-9ee">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="5Kk-cn-0Zb">
+                        <rect key="frame" x="0.0" y="556" width="600" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="C7Y-La-cd8"/>
                     </connections>
