@@ -292,8 +292,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         //            self.selectedCell.append(indexPath.item)
         //        }
         
-//        items.removeAtIndex(indexPath.item)
-//        self.collectionView.reloadData()
+        items.removeAtIndex(indexPath.item)
+        self.collectionView.reloadData()
         
         
         // Find the Pin to which the images should be downloaded and associated with
@@ -308,6 +308,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         
         let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
         
+        request.returnsObjectsAsFaults = false
+        
         request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
         
         do {
@@ -319,8 +321,10 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                     let photos =  result.valueForKey("photos")?.allObjects as! NSArray
 
                     print(photos[indexPath.item])
+                    print(Mirror(reflecting: photos[indexPath.item]))
+//                    photos[indexPath.item].deleteObject(<#T##object: NSManagedObject##NSManagedObject#>)
                     
-                    photos[indexPath.item].setValue(nil, forKey: "imageURL")
+                    context.deleteObject(photos[indexPath.item] as! NSManagedObject)
                     
 //                    let newPhoto = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
 //                    
