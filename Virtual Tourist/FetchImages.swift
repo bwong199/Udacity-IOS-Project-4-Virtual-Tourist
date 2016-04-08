@@ -53,49 +53,56 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                         //
                                         //                                        print(imageURL)
                                         
-                                        NSOperationQueue.mainQueue().addOperationWithBlock({
-                                            //                                            self.items.append(imageURL)
+                                        
+                                        //                                            self.items.append(imageURL)
+                                        
+                                        let viewController = UIApplication.sharedApplication().windows[0].rootViewController?.childViewControllers[1] as? PhotoAlbumViewController
+                                        
+                                        // add individual picture to the items array in CollectionView and do a refresh
+//                                        
+//                                        NSOperationQueue.mainQueue().addOperationWithBlock({
+                                            viewController?.items.append(imageURL)
+//                                            viewController?.do_collection_refresh()
+//                                        })
+                                        
+                                        // Find the Pin to which the images should be downloaded and associated with
+                                        let request = NSFetchRequest(entityName: "Pin")
+                                        //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
+                                        
+                                        
+                                        let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
+                                        
+                                        let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
+                                        
+                                        
+                                        request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
+                                        
+                                        do {
                                             
+                                            let results = try context.executeFetchRequest(request)
                                             
-                                            
-                                            // Find the Pin to which the images should be downloaded and associated with
-                                            let request = NSFetchRequest(entityName: "Pin")
-                                            //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
-                                            
-                                            
-                                            let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
-                                            
-                                            let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
-                                            
-                                            
-                                            request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
-                                            
-                                            do {
-                                                
-                                                let results = try context.executeFetchRequest(request)
-                                                
-                                                if results.count > 0 {
-                                                    for result in results as! [NSManagedObject] {
-                                                        
-                                                        let newPhoto = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
-                                                        
-                                                        newPhoto.setValue(imageURL, forKey: "imageURL")
-                                                        //                                                            result.valueForKey("photos")!.addObject(newPhoto)
-                                                        
-                                                        let photo = result.mutableSetValueForKey("photos")
-                                                        photo.addObject(newPhoto)                                                    }
-                                                }
-                                                
-                                            } catch {
-                                                
+                                            if results.count > 0 {
+                                                for result in results as! [NSManagedObject] {
+                                                    
+                                                    let newPhoto = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
+                                                    
+                                                    newPhoto.setValue(imageURL, forKey: "imageURL")
+                                                    //                                                            result.valueForKey("photos")!.addObject(newPhoto)
+                                                    
+                                                    let photo = result.mutableSetValueForKey("photos")
+                                                    photo.addObject(newPhoto)                                                    }
                                             }
-                                            do {
-                                                try context.save()
-                                            } catch {
-                                                print("There was a problem saving")
-                                            }
-                                            //
-                                        })
+                                            
+                                        } catch {
+                                            
+                                        }
+                                        do {
+                                            try context.save()
+                                        } catch {
+                                            print("There was a problem saving")
+                                        }
+                                        //
+                                        
                                         
                                     }
                                 }
@@ -223,6 +230,6 @@ class FetchImages: UIViewController, MKMapViewDelegate {
             }
         }
         task.resume()
-
+        
     }
 }

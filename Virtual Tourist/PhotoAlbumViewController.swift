@@ -71,18 +71,18 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             print(longitude)
             self.items.removeAll()
             
-//            FetchImages().fetchImages(latitude, longitude: longitude)
+            //            FetchImages().fetchImages(latitude, longitude: longitude)
             FetchImages().fetchNewCollection(latitude, longitude: longitude)
             
-//            self.refresh_data()
+            //            self.refresh_data()
             
-
-       
+            
+            
         }
         
-//        if toolbarButton.title == "Remove Item" {
-//            
-//        }
+        //        if toolbarButton.title == "Remove Item" {
+        //
+        //        }
     }
     
     
@@ -102,8 +102,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        FetchImages().fetchNewCollection(latitude, longitude: longitude)
-
+        //        FetchImages().fetchNewCollection(latitude, longitude: longitude)
+        
         
         toolbarButton.title = "New Collection"
         
@@ -151,7 +151,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     
     
     
-     public func  refresh_data(){
+    public func  refresh_data(){
         let qualityOfServiceClass = QOS_CLASS_BACKGROUND
         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
         dispatch_async(backgroundQueue, {
@@ -184,18 +184,16 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                         //                    print(result.valueForKey("photos") )
                         //
                         
-                        
+                        // check to see if there's any photos under **this** pin, if not do a fetch image
                         if let photos =  (result.valueForKey("photos")?.allObjects)! as? NSArray {
                             if photos.count > 0 {
                                 for photo in photos {
                                     //                                print(photo.valueForKey("imageURL")!)
                                     
-                                    
-                                    //                                NSOperationQueue.mainQueue().addOperationWithBlock({
-                                    
-                                    self.items.append(photo.valueForKey("imageURL")! as! String)
-                                    self.do_collection_refresh()
-                                    //                                })
+//                                    NSOperationQueue.mainQueue().addOperationWithBlock({
+                                        self.items.append(photo.valueForKey("imageURL")! as! String)
+                                        self.do_collection_refresh()
+//                                    })
                                 }
                             } else {
                                 
@@ -203,8 +201,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                             }
                         }
                         
-                        
-  
                     }
                 }
                 
@@ -244,15 +240,17 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         // Use the outlet in our custom class to get a reference to the UILabel in the cell
         //                cell.myLabel.text = self.items[indexPath.item]
-        
-        
-        if let url  = NSURL(string: self.items[indexPath.item] ),
-            data = NSData(contentsOfURL: url)
-        {
-            cell.myImage.image = UIImage(data: data)
-            cell.layer.shouldRasterize = true
-            cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+        if items.count > 0 {
+            if let url  = NSURL(string: self.items[indexPath.item] ),
+                data = NSData(contentsOfURL: url)
+            {
+                cell.myImage.image = UIImage(data: data)
+                cell.layer.shouldRasterize = true
+                cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+            }
         }
+        
+
         
         cell.backgroundColor = UIColor.yellowColor() // make cell more visible in our example project
         
@@ -326,10 +324,10 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             if results.count > 0 {
                 for result in results as! [NSManagedObject] {
                     let photos =  result.valueForKey("photos")?.allObjects as! NSArray
-//
-//                    print(photos[indexPath.item])
-//                    print(Mirror(reflecting: photos[indexPath.item]))
-//                    photos[indexPath.item].deleteObject(<#T##object: NSManagedObject##NSManagedObject#>)
+                    //
+                    //                    print(photos[indexPath.item])
+                    //                    print(Mirror(reflecting: photos[indexPath.item]))
+                    //                    photos[indexPath.item].deleteObject(<#T##object: NSManagedObject##NSManagedObject#>)
                     
                     context.deleteObject(photos[indexPath.item] as! NSManagedObject)
                     
@@ -360,57 +358,57 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         
     }
     
-//    func fetchNewCollection (latitude: Double, longitude: Double){
-//
-//        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-//
-//        let context: NSManagedObjectContext = appDel.managedObjectContext
-//
-//        let roundLatitude = round(latitude * 100 )/100
-//        let roundLongitude = round(longitude * 100 )/100
-//        
-//        // generate a random number per page
-//        let myRandom = arc4random_uniform(10) + 1
-//        
-//        // Fetch Flickr pictures baesd on geolocation
-//        let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=10&page=\(myRandom)")! ;
-//        
-//        
-//        let task = NSURLSession.sharedSession().dataTaskWithURL(url){(data, response, error) -> Void in
-//            if let data = data {
-//                //                print(urlContent)
-//                
-//                do {
-//                    let jsonResult =  try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
-//                    
-//                    if jsonResult.count > 0 {
-//                        
-//                        if let items = jsonResult["photos"] as? NSDictionary {
-//                            
-//                            print(items["pages"])
-//                            
-//                            if let photoItems = items["photo"] as? NSArray {
-//                                
-//                                for item in photoItems {
-//                                    
-//                                    if let imageURL = item["url_s"] as? String {
-//                                        self.items.append(imageURL)
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                    
-//                    
-//                    
-//                } catch {
-//                    print("JSON Serialization failed")
-//                }
-//            }
-//        }
-//        task.resume()
-//        
-//    }
+    //    func fetchNewCollection (latitude: Double, longitude: Double){
+    //
+    //        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+    //
+    //        let context: NSManagedObjectContext = appDel.managedObjectContext
+    //
+    //        let roundLatitude = round(latitude * 100 )/100
+    //        let roundLongitude = round(longitude * 100 )/100
+    //
+    //        // generate a random number per page
+    //        let myRandom = arc4random_uniform(10) + 1
+    //
+    //        // Fetch Flickr pictures baesd on geolocation
+    //        let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=10&page=\(myRandom)")! ;
+    //
+    //
+    //        let task = NSURLSession.sharedSession().dataTaskWithURL(url){(data, response, error) -> Void in
+    //            if let data = data {
+    //                //                print(urlContent)
+    //
+    //                do {
+    //                    let jsonResult =  try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
+    //
+    //                    if jsonResult.count > 0 {
+    //
+    //                        if let items = jsonResult["photos"] as? NSDictionary {
+    //
+    //                            print(items["pages"])
+    //
+    //                            if let photoItems = items["photo"] as? NSArray {
+    //
+    //                                for item in photoItems {
+    //
+    //                                    if let imageURL = item["url_s"] as? String {
+    //                                        self.items.append(imageURL)
+    //                                    }
+    //                                }
+    //                            }
+    //                        }
+    //                    }
+    //                    
+    //                    
+    //                    
+    //                } catch {
+    //                    print("JSON Serialization failed")
+    //                }
+    //            }
+    //        }
+    //        task.resume()
+    //        
+    //    }
     
     
     
