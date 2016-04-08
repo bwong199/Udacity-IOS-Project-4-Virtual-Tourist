@@ -60,12 +60,12 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                             let request = NSFetchRequest(entityName: "Pin")
                                             //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
                                             
-
+                                            
                                             let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
                                             
                                             let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
                                             
-
+                                            
                                             request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
                                             
                                             do {
@@ -104,7 +104,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                     
                     print("Done fetching data")
                     
-       
+                    
                     
                 } catch {
                     print("JSON Serialization failed")
@@ -112,7 +112,13 @@ class FetchImages: UIViewController, MKMapViewDelegate {
             }
         }
         task.resume()
-    
+        
+        
+        let viewController = UIApplication.sharedApplication().windows[0].rootViewController?.childViewControllers[1] as? PhotoAlbumViewController
+        
+        viewController?.refresh_data()
+        viewController?.do_collection_refresh()
+        
     }
     
     
@@ -151,15 +157,16 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                     
                                     if let imageURL = item["url_s"] as? String {
                                         //
-                                        print(imageURL)
+                                        //                                        print(imageURL)
                                         
+                                        let viewController = UIApplication.sharedApplication().windows[0].rootViewController?.childViewControllers[1] as? PhotoAlbumViewController
                                         
-                                        
+                                        // add individual picture to the items array in CollectionView and do a refresh
+                                        viewController?.items.append(imageURL)
+                                        viewController?.do_collection_refresh()
                                         
                                         NSOperationQueue.mainQueue().addOperationWithBlock({
                                             //                                            self.items.append(imageURL)
-                                            
-                                            
                                             
                                             // Find the Pin to which the images should be downloaded and associated with
                                             let request = NSFetchRequest(entityName: "Pin")
@@ -190,34 +197,23 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                         let photo = result.mutableSetValueForKey("photos")
                                                         
                                                         photo.addObject(newPhoto)                                                    }
-                                                    
-                                                    
                                                 }
                                                 
                                             } catch {
                                                 
                                             }
-                                            
-                                            
                                             do {
                                                 try context.save()
                                             } catch {
                                                 print("There was a problem saving")
                                             }
                                             
-                                            
-                                            
                                         })
-                                        
-                                        
-                                        
                                     }
                                 }
                             }
                         }
                     }
-                    
-                    
                     
                 } catch {
                     print("JSON Serialization failed")
@@ -225,6 +221,6 @@ class FetchImages: UIViewController, MKMapViewDelegate {
             }
         }
         task.resume()
-        
+
     }
 }

@@ -49,8 +49,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 
                 if results.count > 0 {
                     for result in results as! [NSManagedObject] {
-                        
-                        
                         result.setValue(nil, forKey: "photos")
                         //                                                                           }
                     }
@@ -72,15 +70,19 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             print(latitude)
             print(longitude)
             self.items.removeAll()
-            FetchImages().fetchImages(latitude, longitude: longitude)
+            
+//            FetchImages().fetchImages(latitude, longitude: longitude)
+            FetchImages().fetchNewCollection(latitude, longitude: longitude)
+            
+//            self.refresh_data()
             
 
-
+       
         }
         
-        if toolbarButton.title == "Remove Item" {
-            
-        }
+//        if toolbarButton.title == "Remove Item" {
+//            
+//        }
     }
     
     
@@ -146,7 +148,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     
     
     
-    func refresh_data(){
+     public func  refresh_data(){
         let qualityOfServiceClass = QOS_CLASS_BACKGROUND
         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
         dispatch_async(backgroundQueue, {
@@ -180,24 +182,26 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                         //
                         
                         
-                        let photos =  result.valueForKey("photos")?.allObjects as! NSArray
-                        
-                        
-                        if photos.count > 0 {
-                            for photo in photos {
-                                print(photo.valueForKey("imageURL")!)
+                        if let photos =  (result.valueForKey("photos")?.allObjects)! as? NSArray {
+                            if photos.count > 0 {
+                                for photo in photos {
+                                    //                                print(photo.valueForKey("imageURL")!)
+                                    
+                                    
+                                    //                                NSOperationQueue.mainQueue().addOperationWithBlock({
+                                    
+                                    self.items.append(photo.valueForKey("imageURL")! as! String)
+                                    self.do_collection_refresh()
+                                    //                                })
+                                }
+                            } else {
                                 
-                                
-                                //                                NSOperationQueue.mainQueue().addOperationWithBlock({
-                                
-                                self.items.append(photo.valueForKey("imageURL")! as! String)
-                                self.do_collection_refresh()
-                                //                                })
+                                FetchImages().fetchImages(self.latitude, longitude: self.longitude)
                             }
-                        } else {
-                            
-                            FetchImages().fetchImages(self.latitude, longitude: self.longitude)
                         }
+                        
+                        
+  
                     }
                 }
                 
@@ -216,7 +220,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         
     }
     
-    func do_collection_refresh()
+    public func do_collection_refresh()
     {
         dispatch_async(dispatch_get_main_queue(), {
             self.collectionView.reloadData()
@@ -319,21 +323,13 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             if results.count > 0 {
                 for result in results as! [NSManagedObject] {
                     let photos =  result.valueForKey("photos")?.allObjects as! NSArray
-
-                    print(photos[indexPath.item])
-                    print(Mirror(reflecting: photos[indexPath.item]))
+//
+//                    print(photos[indexPath.item])
+//                    print(Mirror(reflecting: photos[indexPath.item]))
 //                    photos[indexPath.item].deleteObject(<#T##object: NSManagedObject##NSManagedObject#>)
                     
                     context.deleteObject(photos[indexPath.item] as! NSManagedObject)
                     
-//                    let newPhoto = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
-//                    
-//                    newPhoto.setValue(imageURL, forKey: "imageURL")
-//                    //                                                            result.valueForKey("photos")!.addObject(newPhoto)
-//                    
-//                    let photo = result.mutableSetValueForKey("photos")
-//                    photo.addObject(newPhoto)   
-//                    print(result)
                 }
             }
             
@@ -345,13 +341,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         } catch {
             print("There was a problem saving")
         }
-        
-        //        if selectedCell  > 0 {
-        //            toolbarButton.title = "Remove Item"
-        //        }
-        
-        //        let selectCell:UICollectionViewCell = collectionView.cellForItemAtIndexPath(indexPath)!
-        //        selectCell.contentView.backgroundColor = UIColor.whiteColor()
         
     }
     
