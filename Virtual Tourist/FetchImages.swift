@@ -23,6 +23,8 @@ class FetchImages: UIViewController, MKMapViewDelegate {
         let roundLatitude = round(latitude * 100 )/100
         let roundLongitude = round(longitude * 100 )/100
         
+        
+        // Ideally, I would save the number of pages for the search results  for the given latitude/longitude in core data so I can do a random on page 1 to the max number of pages instead of a fixed number of 10
         // generate a random number per page
         let myRandom = arc4random_uniform(10) + 1
         

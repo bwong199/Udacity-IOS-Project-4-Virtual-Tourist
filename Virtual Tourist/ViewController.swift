@@ -94,19 +94,13 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             annotation.coordinate = newCoordinate
             
 
-            
             let roundLatitude = round(newCoordinate.latitude * 100 )/100
             let roundLongitude = round(newCoordinate.longitude * 100 )/100
-            
-            
-            let fetchImagesInstance : FetchImages = FetchImages()
-            
-            fetchImagesInstance.fetchImages(roundLatitude, longitude: roundLongitude)
+
             
             let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
             
             let context: NSManagedObjectContext = appDel.managedObjectContext
-            
             
             let newLocation = NSEntityDescription.insertNewObjectForEntityForName("Pin", inManagedObjectContext: context)
             
@@ -119,6 +113,11 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             } catch {
                 print("There was a problem")
             }
+            
+
+            
+//            
+//            FetchImages().fetchImages(roundLatitude, longitude: roundLongitude)
             
             map.addAnnotation(annotation)
         }

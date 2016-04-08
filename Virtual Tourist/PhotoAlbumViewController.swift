@@ -102,6 +102,9 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        FetchImages().fetchNewCollection(latitude, longitude: longitude)
+
+        
         toolbarButton.title = "New Collection"
         
         let latitudeAnn:CLLocationDegrees = self.latitude

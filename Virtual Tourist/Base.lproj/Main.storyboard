@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -17,7 +18,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="NaJ-Oi-e6k">
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="NaJ-Oi-e6k">
                                 <rect key="frame" x="0.0" y="72" width="600" height="528"/>
                             </mapView>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QqP-rD-Bm8">
@@ -66,7 +67,7 @@
                                 <rect key="frame" x="0.0" y="64" width="600" height="173"/>
                             </mapView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Sch-nr-rwN">
-                                <rect key="frame" x="0.0" y="228" width="600" height="328"/>
+                                <rect key="frame" x="0.0" y="237" width="600" height="319"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="EcL-b5-2oX">
                                     <size key="itemSize" width="100" height="100"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -106,14 +107,18 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="Pb2-VC-S6b" secondAttribute="trailing" id="OtV-AV-8VN"/>
-                            <constraint firstItem="Sch-nr-rwN" firstAttribute="bottom" secondItem="vzT-mx-GdN" secondAttribute="top" id="Sx3-dx-jWt"/>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="W6l-rX-0E4" secondAttribute="leading" id="W2p-fS-JYU"/>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="Sch-nr-rwN" secondAttribute="leading" id="ZtB-o6-qjG"/>
-                            <constraint firstItem="vzT-mx-GdN" firstAttribute="top" secondItem="Pb2-VC-S6b" secondAttribute="bottom" constant="319" id="pZ1-u8-2xr"/>
-                            <constraint firstItem="Sch-nr-rwN" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" constant="164" id="pxs-Rc-pap"/>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="trailing" secondItem="Sch-nr-rwN" secondAttribute="trailing" id="uar-Ns-4kr"/>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" id="wOE-d7-1U7"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="W6l-rX-0E4" secondAttribute="leading" id="5Ac-IT-dOA"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="W6l-rX-0E4" secondAttribute="leadingMargin" constant="-20" id="CJB-x0-tnb"/>
+                            <constraint firstAttribute="trailing" secondItem="Pb2-VC-S6b" secondAttribute="trailing" id="NLh-pB-ybp"/>
+                            <constraint firstItem="Sch-nr-rwN" firstAttribute="trailing" secondItem="Pb2-VC-S6b" secondAttribute="trailing" id="XEA-QF-Glp"/>
+                            <constraint firstItem="vzT-mx-GdN" firstAttribute="top" secondItem="Pb2-VC-S6b" secondAttribute="bottom" constant="319" id="YNb-CO-7jw"/>
+                            <constraint firstItem="Sch-nr-rwN" firstAttribute="top" secondItem="Pb2-VC-S6b" secondAttribute="bottom" id="cOe-4Q-olO"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" id="gA5-Io-6dL"/>
+                            <constraint firstItem="Sch-nr-rwN" firstAttribute="top" secondItem="Pb2-VC-S6b" secondAttribute="bottom" id="jcw-Vx-lUw"/>
+                            <constraint firstItem="Sch-nr-rwN" firstAttribute="bottom" secondItem="vzT-mx-GdN" secondAttribute="top" id="kfS-et-gn2"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Pb2-VC-S6b" secondAttribute="trailing" constant="-20" id="olv-cw-EY0"/>
+                            <constraint firstItem="Sch-nr-rwN" firstAttribute="leading" secondItem="Pb2-VC-S6b" secondAttribute="leading" id="rfJ-22-bnm"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" id="t5X-dw-6t0"/>
                         </constraints>
                     </view>
                     <toolbarItems>
