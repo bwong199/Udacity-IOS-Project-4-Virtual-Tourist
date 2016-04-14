@@ -31,7 +31,6 @@ class FetchImages: UIViewController, MKMapViewDelegate {
         // Fetch Flickr pictures baesd on geolocation
         let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=10&page=\(myRandom)")! ;
         
-        
         let task = NSURLSession.sharedSession().dataTaskWithURL(url){(data, response, error) -> Void in
             if let data = data {
                 //                print(urlContent)
@@ -49,60 +48,74 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                 
                                 for item in photoItems {
                                     
-                                    if let imageURL = item["url_s"] as? String {
-                                        //
-                                        //                                        print(imageURL)
+                                    if let imageURL = item["url_s"] as? String, let imageID = item["id"] as? String {
+
+                                        let url = NSURL(string: imageURL)
                                         
-                                        
-                                        //                                            self.items.append(imageURL)
-                                        
-                                        let viewController = UIApplication.sharedApplication().windows[0].rootViewController?.childViewControllers[1] as? PhotoAlbumViewController
-                                        
-                                        // add individual picture to the items array in CollectionView and do a refresh
-//                                        
-//                                        NSOperationQueue.mainQueue().addOperationWithBlock({
-                                            viewController?.items.append(imageURL)
-//                                            viewController?.do_collection_refresh()
-//                                        })
-                                        
-                                        // Find the Pin to which the images should be downloaded and associated with
-                                        let request = NSFetchRequest(entityName: "Pin")
-                                        //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
-                                        
-                                        
-                                        let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
-                                        
-                                        let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
-                                        
-                                        
-                                        request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
-                                        
-                                        do {
-                                            
-                                            let results = try context.executeFetchRequest(request)
-                                            
-                                            if results.count > 0 {
-                                                for result in results as! [NSManagedObject] {
+                                        let task = NSURLSession.sharedSession().dataTaskWithURL(url!) { (imageData, response, error) -> Void in
+                                            if error != nil {
+                                                print(error)
+                                            } else {
+                                                
+                                                
+                                                var documentsDirectory: String?
+                                                
+                                                var paths:[AnyObject] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+                                                
+                                                if paths.count > 0 {
                                                     
-                                                    let newPhoto = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
+                                                    documentsDirectory = paths[0] as? String
                                                     
-                                                    newPhoto.setValue(imageURL, forKey: "imageURL")
-                                                    //                                                            result.valueForKey("photos")!.addObject(newPhoto)
+                                                    print(documentsDirectory)
                                                     
-                                                    let photo = result.mutableSetValueForKey("photos")
-                                                    photo.addObject(newPhoto)                                                    }
+                                                    let savePath = documentsDirectory! + "/\(imageID).jpg"
+                                                    
+                                                    //save the images to the savePath
+                                                    NSFileManager.defaultManager().createFileAtPath(savePath, contents: imageData, attributes: nil)
+                                                    
+                                                    
+                                                    // Find the Pin to which the images should be downloaded and associated with
+                                                    let request = NSFetchRequest(entityName: "Pin")
+                                                    //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
+                                                    
+                                                    
+                                                    let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
+                                                    
+                                                    let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
+                                                    
+                                                    
+                                                    request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
+                                                    
+                                                    do {
+                                                        
+                                                        let results = try context.executeFetchRequest(request)
+                                                        
+                                                        if results.count > 0 {
+                                                            for result in results as! [NSManagedObject] {
+                                                                
+                                                                let newPhoto = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
+                                                                // save image id to imageURL Photo Entity
+                                                                newPhoto.setValue("/\(imageID).jpg", forKey: "imageURL")
+                                                                result.valueForKey("photos")!.addObject(newPhoto)
+                                                                
+                                                                // add the imageID in the photos record of the Pin entity
+                                                                let photo = result.mutableSetValueForKey("photos")
+                                                                photo.addObject(newPhoto)                                                    }
+                                                        }
+                                                        
+                                                    } catch {
+                                                        
+                                                    }
+                                                    do {
+                                                        try context.save()
+                                                    } catch {
+                                                        print("There was a problem saving")
+                                                    }
+                                                    
+                                                }
                                             }
-                                            
-                                        } catch {
-                                            
                                         }
-                                        do {
-                                            try context.save()
-                                        } catch {
-                                            print("There was a problem saving")
-                                        }
-                                        //
-                                        
+                                        task.resume()
                                         
                                     }
                                 }
@@ -122,11 +135,10 @@ class FetchImages: UIViewController, MKMapViewDelegate {
         }
         task.resume()
         
-        
-        let viewController = UIApplication.sharedApplication().windows[0].rootViewController?.childViewControllers[1] as? PhotoAlbumViewController
-        
-        viewController?.refresh_data()
-        viewController?.do_collection_refresh()
+        //        let viewController = UIApplication.sharedApplication().windows[0].rootViewController?.childViewControllers[1] as? PhotoAlbumViewController
+        //
+        //        viewController?.refresh_data()
+        //        viewController?.do_collection_refresh()
         
     }
     

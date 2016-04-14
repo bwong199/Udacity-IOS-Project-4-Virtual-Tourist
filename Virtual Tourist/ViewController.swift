@@ -92,12 +92,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             annotation.subtitle = "\(newCoordinate.latitude)  \(newCoordinate.longitude)"
             
             annotation.coordinate = newCoordinate
-            
 
             let roundLatitude = round(newCoordinate.latitude * 100 )/100
             let roundLongitude = round(newCoordinate.longitude * 100 )/100
 
-            
             let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
             
             let context: NSManagedObjectContext = appDel.managedObjectContext
@@ -114,10 +112,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 print("There was a problem")
             }
             
-
-            
-            
-//            FetchImages().fetchImages(roundLatitude, longitude: roundLongitude)
+            // start downloading images when pin is annotated
+            FetchImages().fetchImages(roundLatitude, longitude: roundLongitude)
             
             map.addAnnotation(annotation)
         }

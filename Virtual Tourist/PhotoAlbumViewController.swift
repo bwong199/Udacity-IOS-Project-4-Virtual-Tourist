@@ -64,9 +64,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             } catch {
                 
             }
-            
-            
-            
+
             print(latitude)
             print(longitude)
             self.items.removeAll()
@@ -75,9 +73,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             FetchImages().fetchNewCollection(latitude, longitude: longitude)
             
             //            self.refresh_data()
-            
-            
-            
+
         }
         
         //        if toolbarButton.title == "Remove Item" {
@@ -129,10 +125,10 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         
         mapView.setRegion(region, animated: true)
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
-            
-            self.refresh_data()
-        })
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+//            
+//            self.refresh_data()
+//        })
         
         
         // Find the Pin to which the images should be downloaded and associated with
