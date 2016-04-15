@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -65,6 +64,9 @@
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Pb2-VC-S6b">
                                 <rect key="frame" x="0.0" y="64" width="600" height="173"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="173" id="Q22-fd-vgg"/>
+                                </constraints>
                             </mapView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Sch-nr-rwN">
                                 <rect key="frame" x="0.0" y="237" width="600" height="319"/>
@@ -107,18 +109,13 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="W6l-rX-0E4" secondAttribute="leading" id="5Ac-IT-dOA"/>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="W6l-rX-0E4" secondAttribute="leadingMargin" constant="-20" id="CJB-x0-tnb"/>
-                            <constraint firstAttribute="trailing" secondItem="Pb2-VC-S6b" secondAttribute="trailing" id="NLh-pB-ybp"/>
-                            <constraint firstItem="Sch-nr-rwN" firstAttribute="trailing" secondItem="Pb2-VC-S6b" secondAttribute="trailing" id="XEA-QF-Glp"/>
-                            <constraint firstItem="vzT-mx-GdN" firstAttribute="top" secondItem="Pb2-VC-S6b" secondAttribute="bottom" constant="319" id="YNb-CO-7jw"/>
-                            <constraint firstItem="Sch-nr-rwN" firstAttribute="top" secondItem="Pb2-VC-S6b" secondAttribute="bottom" id="cOe-4Q-olO"/>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" id="gA5-Io-6dL"/>
-                            <constraint firstItem="Sch-nr-rwN" firstAttribute="top" secondItem="Pb2-VC-S6b" secondAttribute="bottom" id="jcw-Vx-lUw"/>
-                            <constraint firstItem="Sch-nr-rwN" firstAttribute="bottom" secondItem="vzT-mx-GdN" secondAttribute="top" id="kfS-et-gn2"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="Pb2-VC-S6b" secondAttribute="trailing" constant="-20" id="olv-cw-EY0"/>
-                            <constraint firstItem="Sch-nr-rwN" firstAttribute="leading" secondItem="Pb2-VC-S6b" secondAttribute="leading" id="rfJ-22-bnm"/>
-                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" id="t5X-dw-6t0"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="W6l-rX-0E4" secondAttribute="leading" id="75e-9A-eyd"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="trailing" secondItem="Sch-nr-rwN" secondAttribute="trailing" id="bMg-xi-I8M"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="leading" secondItem="Sch-nr-rwN" secondAttribute="leading" id="g6i-Qn-Hfz"/>
+                            <constraint firstAttribute="trailing" secondItem="Pb2-VC-S6b" secondAttribute="trailing" id="iXA-LO-z88"/>
+                            <constraint firstItem="Sch-nr-rwN" firstAttribute="bottom" secondItem="vzT-mx-GdN" secondAttribute="top" id="jRu-nE-Lxm"/>
+                            <constraint firstItem="Sch-nr-rwN" firstAttribute="top" secondItem="Pb2-VC-S6b" secondAttribute="bottom" id="o1Z-jU-0Ty"/>
+                            <constraint firstItem="Pb2-VC-S6b" firstAttribute="top" secondItem="snE-OL-2hm" secondAttribute="bottom" id="wyg-gS-6N5"/>
                         </constraints>
                     </view>
                     <toolbarItems>

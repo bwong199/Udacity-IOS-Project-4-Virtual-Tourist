@@ -40,6 +40,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         uilpgr.minimumPressDuration = 0.8
         
         map.addGestureRecognizer(uilpgr)
+        
+        
+        
+        
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -72,6 +76,22 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             
         } catch {
             print("There was a problem!")
+        }
+        
+        // We need just to get the documents folder url
+        let documentsUrl =  NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
+        
+//         now lets get the directory contents (including folders)
+        do {
+            let directoryContents = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(documentsUrl, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions())
+            print(directoryContents)
+            
+            for x in directoryContents {
+                print(x)
+            }
+            
+        } catch let error as NSError {
+            print(error.localizedDescription)
         }
     }
     

@@ -35,6 +35,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             let request = NSFetchRequest(entityName: "Pin")
             //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
             
+            request.returnsObjectsAsFaults = false
             
             let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
             
@@ -64,7 +65,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             } catch {
                 
             }
-
+            
             print(latitude)
             print(longitude)
             self.items.removeAll()
@@ -73,7 +74,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             FetchImages().fetchNewCollection(latitude, longitude: longitude)
             
             //            self.refresh_data()
-
+            
         }
         
         //        if toolbarButton.title == "Remove Item" {
@@ -125,10 +126,10 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         
         mapView.setRegion(region, animated: true)
         
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
-//            
-//            self.refresh_data()
-//        })
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+            
+            self.refresh_data()
+        })
         
         
         // Find the Pin to which the images should be downloaded and associated with
@@ -157,7 +158,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             
             let context: NSManagedObjectContext = appDel.managedObjectContext
             
-            
             let request = NSFetchRequest(entityName: "Pin")
             
             request.returnsObjectsAsFaults = false
@@ -173,27 +173,30 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             do {
                 
                 let results = try context.executeFetchRequest(request)
-                //            print(results)
+//                print(results)
                 
                 if results.count > 0 {
                     for result in results as! [NSManagedObject] {
-                        //                    print(result.valueForKey("photos") )
+//                        print(result.valueForKey("photos")! )
                         //
                         
                         // check to see if there's any photos under **this** pin, if not do a fetch image
                         if let photos =  (result.valueForKey("photos")?.allObjects)! as? NSArray {
+//                            // not worrking
+                            print(photos)
                             if photos.count > 0 {
                                 for photo in photos {
-                                    //                                print(photo.valueForKey("imageURL")!)
+                                    print(photo.valueForKey("imageURL")!)
+                           
                                     
-//                                    NSOperationQueue.mainQueue().addOperationWithBlock({
-                                        self.items.append(photo.valueForKey("imageURL")! as! String)
-                                        self.do_collection_refresh()
-//                                    })
+                                    //                                    NSOperationQueue.mainQueue().addOperationWithBlock({
+                                    //                                        self.items.append(photo.valueForKey("imageURL")! as! String)
+                                    //                                        self.do_collection_refresh()
+                                    //                                    })
                                 }
                             } else {
                                 
-                                FetchImages().fetchImages(self.latitude, longitude: self.longitude)
+                                //                                FetchImages().fetchImages(self.latitude, longitude: self.longitude)
                             }
                         }
                         
@@ -206,11 +209,11 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             }
             
             
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                print("This is run on the main queue, after the previous code in outer block")
-                
-                self.do_collection_refresh()
-            })
+            //            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            //                print("This is run on the main queue, after the previous code in outer block")
+            //
+            //                self.do_collection_refresh()
+            //            })
         })
         
     }
@@ -246,7 +249,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             }
         }
         
-
+        
         
         cell.backgroundColor = UIColor.yellowColor() // make cell more visible in our example project
         
@@ -394,16 +397,16 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     //                            }
     //                        }
     //                    }
-    //                    
-    //                    
-    //                    
+    //
+    //
+    //
     //                } catch {
     //                    print("JSON Serialization failed")
     //                }
     //            }
     //        }
     //        task.resume()
-    //        
+    //
     //    }
     
     

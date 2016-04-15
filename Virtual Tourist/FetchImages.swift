@@ -29,7 +29,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
         let myRandom = arc4random_uniform(10) + 1
         
         // Fetch Flickr pictures baesd on geolocation
-        let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=10&page=\(myRandom)")! ;
+        let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=10")! ;
         
         let task = NSURLSession.sharedSession().dataTaskWithURL(url){(data, response, error) -> Void in
             if let data = data {
@@ -49,14 +49,13 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                 for item in photoItems {
                                     
                                     if let imageURL = item["url_s"] as? String, let imageID = item["id"] as? String {
-
+                                        
                                         let url = NSURL(string: imageURL)
                                         
                                         let task = NSURLSession.sharedSession().dataTaskWithURL(url!) { (imageData, response, error) -> Void in
                                             if error != nil {
                                                 print(error)
                                             } else {
-                                                
                                                 
                                                 var documentsDirectory: String?
                                                 
@@ -66,11 +65,11 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                     
                                                     documentsDirectory = paths[0] as? String
                                                     
-                                                    print(documentsDirectory)
+                                                    //                                                    print(documentsDirectory)
                                                     
                                                     let savePath = documentsDirectory! + "/\(imageID).jpg"
-                                                    
-                                                    //save the images to the savePath
+                                                    //                                                    print(savePath)
+                                                    //save the images to the savePath/Document Directory
                                                     NSFileManager.defaultManager().createFileAtPath(savePath, contents: imageData, attributes: nil)
                                                     
                                                     
@@ -83,6 +82,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                     
                                                     let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
                                                     
+                                                    request.returnsObjectsAsFaults = false
                                                     
                                                     request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
                                                     
@@ -92,22 +92,25 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                         
                                                         if results.count > 0 {
                                                             for result in results as! [NSManagedObject] {
-                                                                
+//                                                                print(result)
                                                                 let newPhoto = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
                                                                 // save image id to imageURL Photo Entity
+                                                                print("/\(imageID).jpg")
                                                                 newPhoto.setValue("/\(imageID).jpg", forKey: "imageURL")
-                                                                result.valueForKey("photos")!.addObject(newPhoto)
                                                                 
-                                                                // add the imageID in the photos record of the Pin entity
-                                                                let photo = result.mutableSetValueForKey("photos")
-                                                                photo.addObject(newPhoto)                                                    }
+                                                                let photos = result.mutableSetValueForKey("photos")
+                                                                photos.addObject(newPhoto)
+ 
+                                                            }
                                                         }
                                                         
                                                     } catch {
                                                         
                                                     }
                                                     do {
+                                                       
                                                         try context.save()
+                                                        print("Saved Successfully")
                                                     } catch {
                                                         print("There was a problem saving")
                                                     }
@@ -116,18 +119,14 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                             }
                                         }
                                         task.resume()
-                                        
                                     }
                                 }
                             }
                         }
                     }
-                    
-                    
+  
                     print("Done fetching data")
-                    
-                    
-                    
+    
                 } catch {
                     print("JSON Serialization failed")
                 }
@@ -212,12 +211,14 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                         let newPhoto = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
                                                         
                                                         newPhoto.setValue(imageURL, forKey: "imageURL")
-                                                        //                                                            result.valueForKey("photos")!.addObject(newPhoto)
                                                         
+                                                        //                                                        result.valueForKey("photos")!.addObject(newPhoto)
                                                         
-                                                        let photo = result.mutableSetValueForKey("photos")
-                                                        
-                                                        photo.addObject(newPhoto)                                                    }
+                                                        //
+                                                        //                                                        let photo = result.mutableSetValueForKey("photos")
+                                                        //
+                                                        //                                                        photo.addObject(newPhoto)
+                                                    }
                                                 }
                                                 
                                             } catch {
