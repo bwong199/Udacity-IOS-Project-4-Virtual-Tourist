@@ -12,7 +12,7 @@ import MapKit
 import CoreLocation
 import CoreData
 
-class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate  {
+class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate  {
     
     
     var latitude : Double = 0
@@ -46,12 +46,54 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             do {
                 let results = try context.executeFetchRequest(request)
                 
+                
+                
                 print(results)
                 
                 if results.count > 0 {
                     for result in results as! [NSManagedObject] {
-                        result.setValue(nil, forKey: "photos")
-                        //                                                                           }
+                        
+                        
+                        
+                        //                        for result in results as! [NSManagedObject] {
+                        //                            //                        print(result.valueForKey("photos")! )
+                        //                            // check to see if there's any photos under **this** pin, if not do a fetch image
+                        //                            if let photos =  (result.valueForKey("photos")?.allObjects)! as? NSArray {
+                        //                                //                            // not worrking
+                        //                                //                            print(photos)
+                        //                                if photos.count > 0 {
+                        //                                    for photo in photos {
+                        //                                        //
+                        //                                        var documentsDirectory: String?
+                        //
+                        //                                        var paths:[AnyObject] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+                        //
+                        //                                        documentsDirectory = paths[0] as? String
+                        //
+                        //                                        if let imagePath = photo.valueForKey("imageURL") as? String {
+                        //                                            let savePath = documentsDirectory! + imagePath
+                        //
+                        //                                            self.items.append(savePath)
+                        //                                        }
+                        //                                    }
+                        //                                } else {
+                        //
+                        //                                }
+                        //                            }
+                        //                        }
+                        
+                        //            if results.count > 0 {
+                        //                for result in results as! [NSManagedObject] {
+                        //                    let photos =  result.valueForKey("photos")?.allObjects as! NSArray
+                        //                    //
+                        //                    //                    print(photos[indexPath.item])
+                        //                    //                    print(Mirror(reflecting: photos[indexPath.item]))
+                        //                    //                    photos[indexPath.item].deleteObject(<#T##object: NSManagedObject##NSManagedObject#>)
+                        //
+                        //                    context.deleteObject(photos[indexPath.item] as! NSManagedObject)
+                        //
+                        //                }
+                        //            }
                     }
                     
                     do {
@@ -100,8 +142,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         super.viewDidLoad()
         
         //        FetchImages().fetchNewCollection(latitude, longitude: longitude)
-        
-        
+
         toolbarButton.title = "New Collection"
         
         let latitudeAnn:CLLocationDegrees = self.latitude
@@ -131,22 +172,78 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             self.refresh_data()
         })
         
-        
-        // Find the Pin to which the images should be downloaded and associated with
-        
-        
-        //        print(roundLatitude)
-        //        print(roundLongitude)
-        
-        
-        
         let roundLatitude = round(latitude * 100 )/100
         let roundLongitude = round(longitude * 100 )/100
         
         
+        // handle long press, long press to delete
+        let lpgr = UILongPressGestureRecognizer(target: self, action: "handleLongPress:")
+        lpgr.minimumPressDuration = 1
+        lpgr.delaysTouchesBegan = true
+        lpgr.delegate = self
+        self.collectionView.addGestureRecognizer(lpgr)
     }
     
     
+    // long press to delete
+    func handleLongPress(gestureReconizer: UILongPressGestureRecognizer) {
+        if gestureReconizer.state != UIGestureRecognizerState.Began {
+            return
+        }
+        let p = gestureReconizer.locationInView(self.collectionView)
+        let indexPath = self.collectionView.indexPathForItemAtPoint(p)
+        
+        if let index = indexPath {
+            var cell = self.collectionView.cellForItemAtIndexPath(index)
+            // do stuff with your cell, for example print the indexPath
+            print(index.row)
+            
+            items.removeAtIndex(index.row)
+            
+            // Find the Pin to which the images should be downloaded and associated with
+            let request = NSFetchRequest(entityName: "Pin")
+            //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
+            
+            let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            
+            let context: NSManagedObjectContext = appDel.managedObjectContext
+            
+            let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
+            
+            let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
+            
+            request.returnsObjectsAsFaults = false
+            
+            request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
+            
+            do {
+                
+                let results = try context.executeFetchRequest(request)
+                
+                if results.count > 0 {
+                    for result in results as! [NSManagedObject] {
+                        let photos =  result.valueForKey("photos")?.allObjects as! NSArray
+                        //
+                        //                    print(photos[indexPath.item])
+                        //                    print(Mirror(reflecting: photos[indexPath.item]))
+                        //                    photos[indexPath.item].deleteObject(<#T##object: NSManagedObject##NSManagedObject#>)
+                        
+                        context.deleteObject(photos[index.row] as! NSManagedObject)
+                        do_collection_refresh()
+                    }
+                }
+            } catch {
+                
+            }
+            do {
+                try context.save()
+            } catch {
+                print("There was a problem saving")
+            }
+        } else {
+            print("Could not find index path")
+        }
+    }
     
     public func  refresh_data(){
         let qualityOfServiceClass = QOS_CLASS_BACKGROUND
@@ -177,9 +274,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 
                 if results.count > 0 {
                     for result in results as! [NSManagedObject] {
+//                        print(result)
                         //                        print(result.valueForKey("photos")! )
-                        //
-                        
                         // check to see if there's any photos under **this** pin, if not do a fetch image
                         if let photos =  (result.valueForKey("photos")?.allObjects)! as? NSArray {
                             //                            // not worrking
@@ -187,26 +283,22 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                             if photos.count > 0 {
                                 for photo in photos {
                                     //
-                                    
                                     var documentsDirectory: String?
                                     
                                     var paths:[AnyObject] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
                                     
                                     documentsDirectory = paths[0] as? String
                                     
-                                    //                                    print(photo.valueForKey("imageURL")!)
                                     if let imagePath = photo.valueForKey("imageURL") as? String {
                                         let savePath = documentsDirectory! + imagePath
                                         
                                         self.items.append(savePath)
-                                        
                                     }
                                 }
                             } else {
                                 
                             }
                         }
-                        
                     }
                 }
                 
@@ -222,9 +314,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 }
             })
         })
-        
-        
-        
     }
     
     public func do_collection_refresh()
@@ -246,7 +335,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MyCollectionViewCell
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-
+        
         let imagePath  = self.items[indexPath.item]
         
         cell.myImage.image = UIImage(named: imagePath)
@@ -255,31 +344,11 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         
         
         cell.backgroundColor = UIColor.whiteColor()
-
+        
         
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-        // get a reference to our storyboard cell
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MyCollectionViewCell
-        cell.layer.shouldRasterize = true
-        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-        // Use the outlet in our custom class to get a reference to the UILabel in the cell
-        //                cell.myLabel.text = self.items[indexPath.item]
-        
-        
-        let imagePath  = self.items[indexPath.item]
-        
-        cell.myImage.image = UIImage(named: imagePath)
-        cell.layer.shouldRasterize = true
-        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-        
-        
-        cell.backgroundColor = UIColor.whiteColor() // make cell more visible in our example project
-        
-        //        return cell
-    }
     
     // MARK: - UICollectionViewDelegate protocol
     
@@ -290,126 +359,19 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         
-        //        print("You selected cell #\(indexPath.item)!")
-        //
-        //        if self.selectedCell.contains(indexPath.item){
-        //            print("Item already added")
-        //        } else {
-        //            self.selectedCell.append(indexPath.item)
-        //        }
+//        print("You selected cell #\(indexPath.item)!")
+//        
+//        print(items[indexPath.item])
         
-        items.removeAtIndex(indexPath.item)
+        
+        //        items.removeAtIndex(indexPath.item)
         self.collectionView.reloadData()
         
         
-        // Find the Pin to which the images should be downloaded and associated with
-        let request = NSFetchRequest(entityName: "Pin")
-        //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
-        
-        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        let context: NSManagedObjectContext = appDel.managedObjectContext
-        
-        let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
-        
-        let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
-        
-        request.returnsObjectsAsFaults = false
-        
-        request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
-        
-        do {
-            
-            let results = try context.executeFetchRequest(request)
-            
-            if results.count > 0 {
-                for result in results as! [NSManagedObject] {
-                    let photos =  result.valueForKey("photos")?.allObjects as! NSArray
-                    //
-                    //                    print(photos[indexPath.item])
-                    //                    print(Mirror(reflecting: photos[indexPath.item]))
-                    //                    photos[indexPath.item].deleteObject(<#T##object: NSManagedObject##NSManagedObject#>)
-                    
-                    context.deleteObject(photos[indexPath.item] as! NSManagedObject)
-                    
-                }
-            }
-            
-        } catch {
-            
-        }
-        do {
-            try context.save()
-        } catch {
-            print("There was a problem saving")
-        }
         
     }
     
-    func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
-        //
-        //        let cellToDeSelect:UICollectionViewCell = collectionView.cellForItemAtIndexPath(indexPath)!
-        //
-        //        cellToDeSelect.contentView.backgroundColor = UIColor.clearColor()
-        
-        //
-        //        if selectedCell.count > 0 {
-        //                    selectedCell.removeAtIndex(indexPath.item)
-        //        }
-        
-    }
-    
-    //    func fetchNewCollection (latitude: Double, longitude: Double){
-    //
-    //        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-    //
-    //        let context: NSManagedObjectContext = appDel.managedObjectContext
-    //
-    //        let roundLatitude = round(latitude * 100 )/100
-    //        let roundLongitude = round(longitude * 100 )/100
-    //
-    //        // generate a random number per page
-    //        let myRandom = arc4random_uniform(10) + 1
-    //
-    //        // Fetch Flickr pictures baesd on geolocation
-    //        let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=10&page=\(myRandom)")! ;
-    //
-    //
-    //        let task = NSURLSession.sharedSession().dataTaskWithURL(url){(data, response, error) -> Void in
-    //            if let data = data {
-    //                //                print(urlContent)
-    //
-    //                do {
-    //                    let jsonResult =  try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
-    //
-    //                    if jsonResult.count > 0 {
-    //
-    //                        if let items = jsonResult["photos"] as? NSDictionary {
-    //
-    //                            print(items["pages"])
-    //
-    //                            if let photoItems = items["photo"] as? NSArray {
-    //
-    //                                for item in photoItems {
-    //
-    //                                    if let imageURL = item["url_s"] as? String {
-    //                                        self.items.append(imageURL)
-    //                                    }
-    //                                }
-    //                            }
-    //                        }
-    //                    }
-    //
-    //
-    //
-    //                } catch {
-    //                    print("JSON Serialization failed")
-    //                }
-    //            }
-    //        }
-    //        task.resume()
-    //
-    //    }
+
     
     
     

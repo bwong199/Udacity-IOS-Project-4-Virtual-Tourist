@@ -65,8 +65,6 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                     
                                                     documentsDirectory = paths[0] as? String
                                                     
-                                                    //                                                    print(documentsDirectory)
-                                                    
                                                     let savePath = documentsDirectory! + "/\(imageID).jpg"
                                                     //                                                    print(savePath)
                                                     //save the images to the savePath/Document Directory
@@ -76,12 +74,8 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                     // Find the Pin to which the images should be downloaded and associated with
                                                     let request = NSFetchRequest(entityName: "Pin")
                                                     //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
-                                                    
-                                                    
                                                     let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
-                                                    
                                                     let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
-                                                    
                                                     request.returnsObjectsAsFaults = false
                                                     
                                                     request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
@@ -196,25 +190,14 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                             
                                             
                                             //
-                                            request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
-                                            
+                                            request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])                 
                                             do {
-                                                
                                                 let results = try context.executeFetchRequest(request)
-                                                
                                                 if results.count > 0 {
                                                     for result in results as! [NSManagedObject] {
                                                         
                                                         let newPhoto = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
-                                                        
                                                         newPhoto.setValue(imageURL, forKey: "imageURL")
-                                                        
-                                                        //                                                        result.valueForKey("photos")!.addObject(newPhoto)
-                                                        
-                                                        //
-                                                        //                                                        let photo = result.mutableSetValueForKey("photos")
-                                                        //
-                                                        //                                                        photo.addObject(newPhoto)
                                                     }
                                                 }
                                                 
