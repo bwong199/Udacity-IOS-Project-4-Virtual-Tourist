@@ -100,12 +100,9 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                                 
                                                                 let photos = result.mutableSetValueForKey("photos")
                                                                 photos.addObject(newPhoto)
- 
-                                                            }
+                                                             }
                                                         }
-                                                        
                                                     } catch {
-                                                        
                                                     }
                                                     do {
                                                        

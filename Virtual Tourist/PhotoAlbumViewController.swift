@@ -173,48 +173,57 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             do {
                 
                 let results = try context.executeFetchRequest(request)
-//                print(results)
+                //                print(results)
                 
                 if results.count > 0 {
                     for result in results as! [NSManagedObject] {
-//                        print(result.valueForKey("photos")! )
+                        //                        print(result.valueForKey("photos")! )
                         //
                         
                         // check to see if there's any photos under **this** pin, if not do a fetch image
                         if let photos =  (result.valueForKey("photos")?.allObjects)! as? NSArray {
-//                            // not worrking
-                            print(photos)
+                            //                            // not worrking
+                            //                            print(photos)
                             if photos.count > 0 {
                                 for photo in photos {
-                                    print(photo.valueForKey("imageURL")!)
-                           
+                                    //
                                     
-                                    //                                    NSOperationQueue.mainQueue().addOperationWithBlock({
-                                    //                                        self.items.append(photo.valueForKey("imageURL")! as! String)
-                                    //                                        self.do_collection_refresh()
-                                    //                                    })
+                                    var documentsDirectory: String?
+                                    
+                                    var paths:[AnyObject] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+                                    
+                                    documentsDirectory = paths[0] as? String
+                                    
+                                    //                                    print(photo.valueForKey("imageURL")!)
+                                    if let imagePath = photo.valueForKey("imageURL") as? String {
+                                        let savePath = documentsDirectory! + imagePath
+                                        
+                                        self.items.append(savePath)
+                                        
+                                    }
                                 }
                             } else {
                                 
-                                //                                FetchImages().fetchImages(self.latitude, longitude: self.longitude)
                             }
                         }
                         
                     }
                 }
                 
-                
             } catch {
                 print("Fetch Failed")
             }
             
-            
-            //            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            //                print("This is run on the main queue, after the previous code in outer block")
-            //
-            //                self.do_collection_refresh()
-            //            })
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                print("This is run on the main queue, after the previous code in outer block")
+                
+                for x in self.items {
+                    print(x)
+                }
+            })
         })
+        
+        
         
     }
     
@@ -237,21 +246,16 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MyCollectionViewCell
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-        // Use the outlet in our custom class to get a reference to the UILabel in the cell
-        //                cell.myLabel.text = self.items[indexPath.item]
-        if items.count > 0 {
-            if let url  = NSURL(string: self.items[indexPath.item] ),
-                data = NSData(contentsOfURL: url)
-            {
-                cell.myImage.image = UIImage(data: data)
-                cell.layer.shouldRasterize = true
-                cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-            }
-        }
+
+        let imagePath  = self.items[indexPath.item]
+        
+        cell.myImage.image = UIImage(named: imagePath)
+        cell.layer.shouldRasterize = true
+        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         
         
-        
-        cell.backgroundColor = UIColor.yellowColor() // make cell more visible in our example project
+        cell.backgroundColor = UIColor.whiteColor()
+
         
         return cell
     }
@@ -265,16 +269,14 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         //                cell.myLabel.text = self.items[indexPath.item]
         
         
-        if let url  = NSURL(string: self.items[indexPath.item] ),
-            data = NSData(contentsOfURL: url)
-        {
-            
-            cell.myImage.image = UIImage(data: data)
-            cell.layer.shouldRasterize = true
-            cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-        }
+        let imagePath  = self.items[indexPath.item]
         
-        cell.backgroundColor = UIColor.yellowColor() // make cell more visible in our example project
+        cell.myImage.image = UIImage(named: imagePath)
+        cell.layer.shouldRasterize = true
+        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+        
+        
+        cell.backgroundColor = UIColor.whiteColor() // make cell more visible in our example project
         
         //        return cell
     }

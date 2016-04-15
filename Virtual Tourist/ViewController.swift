@@ -82,17 +82,17 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         let documentsUrl =  NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
         
 //         now lets get the directory contents (including folders)
-        do {
-            let directoryContents = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(documentsUrl, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions())
-            print(directoryContents)
-            
-            for x in directoryContents {
-                print(x)
-            }
-            
-        } catch let error as NSError {
-            print(error.localizedDescription)
-        }
+//        do {
+//            let directoryContents = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(documentsUrl, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions())
+//            print(directoryContents)
+//            
+//            for x in directoryContents {
+//                print(x)
+//            }
+//            
+//        } catch let error as NSError {
+//            print(error.localizedDescription)
+//        }
     }
     
     
