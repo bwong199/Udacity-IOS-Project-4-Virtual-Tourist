@@ -18,6 +18,7 @@
 		C576E8BC1CA8232A00633328 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C576E8BB1CA8232A00633328 /* MapKit.framework */; };
 		C576E8BE1CA8295600633328 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C576E8BD1CA8295600633328 /* CoreLocation.framework */; };
 		C576E8C01CA832F600633328 /* PhotoAlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C576E8BF1CA832F600633328 /* PhotoAlbumViewController.swift */; };
+		C5A604571CC14EE60057511F /* DetailImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A604561CC14EE60057511F /* DetailImageController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		C576E8BB1CA8232A00633328 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		C576E8BD1CA8295600633328 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		C576E8BF1CA832F600633328 /* PhotoAlbumViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoAlbumViewController.swift; sourceTree = "<group>"; };
+		C5A604561CC14EE60057511F /* DetailImageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailImageController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 				C576E8A81CA822F600633328 /* ViewController.swift */,
 				C53BD97A1CB4D2DD00899D3E /* FetchImages.swift */,
 				C576E8BF1CA832F600633328 /* PhotoAlbumViewController.swift */,
+				C5A604561CC14EE60057511F /* DetailImageController.swift */,
 				C53BD9781CB4518400899D3E /* MyCollectionViewCell.swift */,
 				C576E8AA1CA822F600633328 /* Main.storyboard */,
 				C576E8B01CA822F600633328 /* Assets.xcassets */,
@@ -159,6 +162,7 @@
 				C576E8A91CA822F600633328 /* ViewController.swift in Sources */,
 				C53BD9791CB4518400899D3E /* MyCollectionViewCell.swift in Sources */,
 				C576E8AF1CA822F600633328 /* Virtual_Tourist.xcdatamodeld in Sources */,
+				C5A604571CC14EE60057511F /* DetailImageController.swift in Sources */,
 				C576E8A71CA822F600633328 /* AppDelegate.swift in Sources */,
 				C53BD97B1CB4D2DD00899D3E /* FetchImages.swift in Sources */,
 				C576E8C01CA832F600633328 /* PhotoAlbumViewController.swift in Sources */,

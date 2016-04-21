@@ -14,7 +14,7 @@ import CoreLocation
 class FetchImages: UIViewController, MKMapViewDelegate {
     
     
-    func fetchImages (latitude: Double, longitude: Double){
+    func fetchImages (latitude: Double, longitude: Double, completionHandler:(success: Bool, error: String?, results: String?) -> Void){
         print("Fetching Images")
         let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
@@ -86,7 +86,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                         
                                                         if results.count > 0 {
                                                             for result in results as! [NSManagedObject] {
-//                                                                print(result)
+                                                                //                                                                print(result)
                                                                 let newPhoto = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
                                                                 // save image id to imageURL Photo Entity
                                                                 print("/\(imageID).jpg")
@@ -94,30 +94,39 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                                 
                                                                 let photos = result.mutableSetValueForKey("photos")
                                                                 photos.addObject(newPhoto)
-                                                             }
+                                                            }
                                                         }
                                                     } catch {
                                                     }
+                                                    
                                                     do {
-                                                       
+                                                        
                                                         try context.save()
                                                         print("Saved Successfully")
                                                     } catch {
                                                         print("There was a problem saving")
                                                     }
                                                     
+                                                    
+                
+                                                    
                                                 }
+   
                                             }
                                         }
                                         task.resume()
+                                        
+                                        
                                     }
                                 }
                             }
                         }
                     }
-  
+                    
                     print("Done fetching data")
-    
+                                                        completionHandler(success: true, error: nil, results: "Success")
+                    
+                    
                 } catch {
                     print("JSON Serialization failed")
                 }
@@ -190,7 +199,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                             
                                             
                                             //
-                                            request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])                 
+                                            request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
                                             do {
                                                 let results = try context.executeFetchRequest(request)
                                                 if results.count > 0 {

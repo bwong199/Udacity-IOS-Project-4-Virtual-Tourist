@@ -17,6 +17,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     var longitude : Double = 0
     
     
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
     @IBOutlet var map: MKMapView!
     
@@ -25,12 +26,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     var selectedPin: CLLocationCoordinate2D? = nil
     
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.map.delegate = self
-        
         
         
         let uilpgr = UILongPressGestureRecognizer(target: self, action: "action:")
@@ -47,6 +46,12 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     }
     
     override func viewWillAppear(animated: Bool) {
+        
+        self.activityIndicator.hidden = true
+        
+        let allAnnotations = self.map.annotations
+        self.map.removeAnnotations(allAnnotations)
+        
         let request = NSFetchRequest(entityName: "Pin")
         let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
@@ -81,22 +86,25 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         // We need just to get the documents folder url
         let documentsUrl =  NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
         
-//         now lets get the directory contents (including folders)
-//        do {
-//            let directoryContents = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(documentsUrl, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions())
-//            print(directoryContents)
-//            
-//            for x in directoryContents {
-//                print(x)
-//            }
-//            
-//        } catch let error as NSError {
-//            print(error.localizedDescription)
-//        }
+//                 now lets get the directory contents (including folders)
+                do {
+                    let directoryContents = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(documentsUrl, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions())
+                    print(directoryContents)
+        
+                    for x in directoryContents {
+                        print(x)
+                    }
+        
+                } catch let error as NSError {
+                    print(error.localizedDescription)
+                }
     }
     
     
     func action(gestureRecognizer: UIGestureRecognizer){
+        activityIndicator.hidden = false
+        activityIndicator.color = UIColor.blackColor()
+        activityIndicator.startAnimating()
         
         if (gestureRecognizer.state == UIGestureRecognizerState.Began){
             let touchPoint = gestureRecognizer.locationInView(self.map)
@@ -112,10 +120,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             annotation.subtitle = "\(newCoordinate.latitude)  \(newCoordinate.longitude)"
             
             annotation.coordinate = newCoordinate
-
+            
             let roundLatitude = round(newCoordinate.latitude * 100 )/100
             let roundLongitude = round(newCoordinate.longitude * 100 )/100
-
+            
             let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
             
             let context: NSManagedObjectContext = appDel.managedObjectContext
@@ -133,7 +141,29 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             }
             
             // start downloading images when pin is annotated
+            
+            
+            
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                self.activityIndicator.startAnimating()
+            })
+            
             FetchImages().fetchImages(roundLatitude, longitude: roundLongitude)
+            {(success, error, results) in
+                if success {
+                    
+                    
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.activityIndicator.stopAnimating()
+                        self.activityIndicator.hidden = true
+                    })
+                    
+                } else {
+                    
+                }
+            }
+            
             
             map.addAnnotation(annotation)
         }
@@ -162,15 +192,15 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         self.map.setRegion(region, animated: false)
     }
     
-//    func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
-//        
-//        let pin = view.annotation
-//        performSegueWithIdentifier("toLocationDetail", sender: pin)
-//    }
+    //    func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
+    //
+    //        let pin = view.annotation
+    //        performSegueWithIdentifier("toLocationDetail", sender: pin)
+    //    }
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-//        let coordinates = String((view.annotation!.coordinate))
-//        
+        //        let coordinates = String((view.annotation!.coordinate))
+        //
         //        print(coordinates)
         let roundLatitude = round(view.annotation!.coordinate.latitude * 100 )/100
         let roundLongitude = round(view.annotation!.coordinate.longitude * 100 )/100
@@ -193,9 +223,9 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             let detailController = segue.destinationViewController as! PhotoAlbumViewController
             
             detailController.latitude = self.latitude
-//            print(String(detailController.latitude) + "from main view" + String(Mirror(reflecting: detailController.latitude)) )
+            //            print(String(detailController.latitude) + "from main view" + String(Mirror(reflecting: detailController.latitude)) )
             detailController.longitude = self.longitude
-//            print(String(detailController.longitude) + "from main view" + String(Mirror(reflecting: detailController.longitude)) )
+            //            print(String(detailController.longitude) + "from main view" + String(Mirror(reflecting: detailController.longitude)) )
         }
         
     }

@@ -13,6 +13,8 @@ class MyCollectionViewCell: UICollectionViewCell {
 //
 //    @IBOutlet var spinner: UIActivityIndicatorView!
 
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
+    
     @IBOutlet var myImage: UIImageView!
 //    
 //    override func awakeFromNib() {

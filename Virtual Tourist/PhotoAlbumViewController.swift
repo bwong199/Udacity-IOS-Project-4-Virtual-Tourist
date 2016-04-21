@@ -20,110 +20,9 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     //    var selectedCell: [Int] =  []
     
     var selectedCell: Int = 0
+    var selectedItem: String = ""
     
     @IBOutlet var toolbarButton: UIBarButtonItem!
-    
-    
-    @IBAction func toolbarButtonAction(sender: AnyObject) {
-        
-        // on New Collection button pressed, delete the results in "photos" and do a new fetch
-        if toolbarButton.title ==  "New Collection" {
-            let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-            
-            let context: NSManagedObjectContext = appDel.managedObjectContext
-            
-            let request = NSFetchRequest(entityName: "Pin")
-            //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
-            
-            request.returnsObjectsAsFaults = false
-            
-            let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
-            
-            let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
-            
-            //
-            request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
-            do {
-                let results = try context.executeFetchRequest(request)
-                
-                
-                
-                print(results)
-                
-                if results.count > 0 {
-                    for result in results as! [NSManagedObject] {
-                        
-                        
-                        
-                        //                        for result in results as! [NSManagedObject] {
-                        //                            //                        print(result.valueForKey("photos")! )
-                        //                            // check to see if there's any photos under **this** pin, if not do a fetch image
-                        //                            if let photos =  (result.valueForKey("photos")?.allObjects)! as? NSArray {
-                        //                                //                            // not worrking
-                        //                                //                            print(photos)
-                        //                                if photos.count > 0 {
-                        //                                    for photo in photos {
-                        //                                        //
-                        //                                        var documentsDirectory: String?
-                        //
-                        //                                        var paths:[AnyObject] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-                        //
-                        //                                        documentsDirectory = paths[0] as? String
-                        //
-                        //                                        if let imagePath = photo.valueForKey("imageURL") as? String {
-                        //                                            let savePath = documentsDirectory! + imagePath
-                        //
-                        //                                            self.items.append(savePath)
-                        //                                        }
-                        //                                    }
-                        //                                } else {
-                        //
-                        //                                }
-                        //                            }
-                        //                        }
-                        
-                        //            if results.count > 0 {
-                        //                for result in results as! [NSManagedObject] {
-                        //                    let photos =  result.valueForKey("photos")?.allObjects as! NSArray
-                        //                    //
-                        //                    //                    print(photos[indexPath.item])
-                        //                    //                    print(Mirror(reflecting: photos[indexPath.item]))
-                        //                    //                    photos[indexPath.item].deleteObject(<#T##object: NSManagedObject##NSManagedObject#>)
-                        //
-                        //                    context.deleteObject(photos[indexPath.item] as! NSManagedObject)
-                        //
-                        //                }
-                        //            }
-                    }
-                    
-                    do {
-                        try context.save()
-                    } catch {
-                        print("There was a problem saving")
-                    }
-                    
-                }
-                
-            } catch {
-                
-            }
-            
-            print(latitude)
-            print(longitude)
-            self.items.removeAll()
-            
-            //            FetchImages().fetchImages(latitude, longitude: longitude)
-            FetchImages().fetchNewCollection(latitude, longitude: longitude)
-            
-            //            self.refresh_data()
-            
-        }
-        
-        //        if toolbarButton.title == "Remove Item" {
-        //
-        //        }
-    }
-    
     
     @IBOutlet var mapView: MKMapView!
     
@@ -142,7 +41,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         super.viewDidLoad()
         
         //        FetchImages().fetchNewCollection(latitude, longitude: longitude)
-
+        
         toolbarButton.title = "New Collection"
         
         let latitudeAnn:CLLocationDegrees = self.latitude
@@ -184,7 +83,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         self.collectionView.addGestureRecognizer(lpgr)
     }
     
-    
     // long press to delete
     func handleLongPress(gestureReconizer: UILongPressGestureRecognizer) {
         if gestureReconizer.state != UIGestureRecognizerState.Began {
@@ -200,9 +98,26 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             
             items.removeAtIndex(index.row)
             
-            // Find the Pin to which the images should be downloaded and associated with
+            //remove from directory
+            var documentsDirectory: String?
+            
+            var paths:[AnyObject] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+            
+            if paths.count > 0 {
+                
+                documentsDirectory = paths[0] as? String
+                
+                let removePath = documentsDirectory! + items[index.row]
+                
+                do {
+                    try NSFileManager.defaultManager().removeItemAtPath(removePath)
+                } catch {
+                    
+                }
+                
+            }
+            // Find the Pin to which the images should be downloaded and delete that image
             let request = NSFetchRequest(entityName: "Pin")
-            //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
             
             let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
             
@@ -223,10 +138,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 if results.count > 0 {
                     for result in results as! [NSManagedObject] {
                         let photos =  result.valueForKey("photos")?.allObjects as! NSArray
-                        //
-                        //                    print(photos[indexPath.item])
-                        //                    print(Mirror(reflecting: photos[indexPath.item]))
-                        //                    photos[indexPath.item].deleteObject(<#T##object: NSManagedObject##NSManagedObject#>)
                         
                         context.deleteObject(photos[index.row] as! NSManagedObject)
                         do_collection_refresh()
@@ -274,7 +185,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 
                 if results.count > 0 {
                     for result in results as! [NSManagedObject] {
-//                        print(result)
+                        //                        print(result)
                         //                        print(result.valueForKey("photos")! )
                         // check to see if there's any photos under **this** pin, if not do a fetch image
                         if let photos =  (result.valueForKey("photos")?.allObjects)! as? NSArray {
@@ -289,11 +200,15 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                                     
                                     documentsDirectory = paths[0] as? String
                                     
-                                    if let imagePath = photo.valueForKey("imageURL") as? String {
-                                        let savePath = documentsDirectory! + imagePath
-                                        
-                                        self.items.append(savePath)
-                                    }
+                                    dispatch_async(dispatch_get_main_queue(), {
+                                        if let imagePath = photo.valueForKey("imageURL") as? String {
+                                            let savePath = documentsDirectory! + imagePath
+                                            
+                                            self.items.append(savePath)
+                                            self.do_collection_refresh()
+                                        }
+                                        return
+                                    })
                                 }
                             } else {
                                 
@@ -310,8 +225,10 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 print("This is run on the main queue, after the previous code in outer block")
                 
                 for x in self.items {
-                    print(x)
+                    print(self.items.indexOf(x))
                 }
+                
+                
             })
         })
     }
@@ -333,6 +250,9 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         
         // get a reference to our storyboard cell
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MyCollectionViewCell
+        
+        cell.activityIndicator.stopAnimating()
+        
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         
@@ -359,19 +279,120 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         
-//        print("You selected cell #\(indexPath.item)!")
-//        
-//        print(items[indexPath.item])
         
+        self.selectedItem = items[indexPath.row]
+        self.performSegueWithIdentifier("detailViewSegue", sender: self)
         
-        //        items.removeAtIndex(indexPath.item)
         self.collectionView.reloadData()
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
-        
+        if segue.identifier == "detailViewSegue"{
+            let detailVC = segue.destinationViewController as!  DetailImageController
+            
+            detailVC.imageURL = self.selectedItem
+        }
         
     }
     
+    @IBAction func toolbarButtonAction(sender: AnyObject) {
+        
+        // on New Collection button pressed, delete the results in "photos" and do a new fetch
+        if toolbarButton.title ==  "New Collection" {
+            
+            
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                
+                self.items.removeAll()
+                self.do_collection_refresh()
+                
+            })
+            
+            let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            
+            let context: NSManagedObjectContext = appDel.managedObjectContext
+            
+            let request = NSFetchRequest(entityName: "Pin")
+            //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
+            
+            request.returnsObjectsAsFaults = false
+            
+            let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
+            
+            let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
+            
+            //
+            request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
+            do {
+                let results = try context.executeFetchRequest(request)
+                //                print(results)
+                if results.count > 0 {
+                    for result in results as! [NSManagedObject] {
+                        
+                        for result in results as! [NSManagedObject] {
+                            //                            print(result.valueForKey("photos")! )
+                            //                             check to see if there's any photos under **this** pin, if not do a fetch image
+                            let photosArray = result.valueForKey("photos")?.allObjects as! NSArray
+                            
+                            for x in photosArray {
+                                //                                print(Mirror(reflecting: x))
+                                print(x.valueForKey("imageURL"))
+                                
+                                // delete from Core Data
+                                context.deleteObject(x as! NSManagedObject)
+                                
+                                //remove from directory
+                                var documentsDirectory: String?
+                                
+                                var paths:[AnyObject] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+                                
+                                if paths.count > 0 {
+                                    
+                                    documentsDirectory = paths[0] as? String
+                                    
+                                    let removePath = documentsDirectory! + String(x.valueForKey("imageURL")!)
+                                    
+                                    print(removePath)
+                                    
+                                    do {
+                                        try NSFileManager.defaultManager().removeItemAtPath(removePath)
+                                    } catch {
+                                        
+                                    }
+                                    
+                                }
+                            }
 
+                            
+                        }
+
+                    }
+                    
+                    do {
+                        try context.save()
+                    } catch {
+                        print("There was a problem saving")
+                    }
+                    
+                }
+                
+            } catch {
+                
+            }
+            
+            
+            
+            //            FetchImages().fetchImages(latitude, longitude: longitude)
+            //            FetchImages().fetchNewCollection(latitude, longitude: longitude)
+            
+            
+        }
+        
+    }
+    
+    
     
     
     
