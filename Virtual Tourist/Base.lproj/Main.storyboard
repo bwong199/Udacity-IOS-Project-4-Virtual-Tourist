@@ -98,19 +98,19 @@
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="y8g-lO-Cdj">
                                                     <rect key="frame" x="0.0" y="0.0" width="110" height="110"/>
                                                 </imageView>
-                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="o1h-wV-p9Q">
-                                                    <rect key="frame" x="55" y="55" width="20" height="20"/>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="o1h-wV-p9Q">
+                                                    <rect key="frame" x="32" y="31" width="37" height="37"/>
                                                 </activityIndicatorView>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
                                             <constraint firstAttribute="trailingMargin" secondItem="y8g-lO-Cdj" secondAttribute="trailing" constant="-18" id="8ke-L8-fkb"/>
+                                            <constraint firstItem="o1h-wV-p9Q" firstAttribute="centerX" secondItem="uXc-4t-sKZ" secondAttribute="centerX" id="PSS-sN-TRY"/>
                                             <constraint firstAttribute="bottomMargin" secondItem="y8g-lO-Cdj" secondAttribute="bottom" constant="-18" id="dYG-hu-GLV"/>
                                             <constraint firstItem="y8g-lO-Cdj" firstAttribute="leading" secondItem="uXc-4t-sKZ" secondAttribute="leading" id="gFS-Vf-T4V"/>
-                                            <constraint firstItem="o1h-wV-p9Q" firstAttribute="leading" secondItem="uXc-4t-sKZ" secondAttribute="leadingMargin" constant="47" id="lBp-lh-Sil"/>
+                                            <constraint firstItem="o1h-wV-p9Q" firstAttribute="centerY" secondItem="uXc-4t-sKZ" secondAttribute="centerY" id="jqw-nd-aDB"/>
                                             <constraint firstItem="y8g-lO-Cdj" firstAttribute="top" secondItem="uXc-4t-sKZ" secondAttribute="top" id="lSb-xF-tSx"/>
-                                            <constraint firstItem="o1h-wV-p9Q" firstAttribute="top" secondItem="uXc-4t-sKZ" secondAttribute="topMargin" constant="47" id="nI3-TB-Efe"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="activityIndicator" destination="o1h-wV-p9Q" id="N41-xG-u6B"/>

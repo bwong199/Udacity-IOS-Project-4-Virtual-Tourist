@@ -204,8 +204,12 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                                         if let imagePath = photo.valueForKey("imageURL") as? String {
                                             let savePath = documentsDirectory! + imagePath
                                             
-                                            self.items.append(savePath)
-                                            self.do_collection_refresh()
+                                            if !self.items.contains(savePath){
+                                                
+                                                self.items.append(savePath)
+                                                self.do_collection_refresh()
+                                            }
+                                            
                                         }
                                         return
                                     })
@@ -251,7 +255,18 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         // get a reference to our storyboard cell
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MyCollectionViewCell
         
-        cell.activityIndicator.stopAnimating()
+        
+        cell.activityIndicator.color = UIColor.whiteColor()
+        cell.activityIndicator.startAnimating()
+        cell.activityIndicator.hidden = false
+        
+        
+        if cell.myImage.image != nil {
+            cell.activityIndicator.stopAnimating()
+            cell.activityIndicator.hidden = true
+            
+
+        }
         
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.mainScreen().scale
@@ -264,6 +279,10 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         
         
         cell.backgroundColor = UIColor.whiteColor()
+        
+        cell.activityIndicator.stopAnimating()
+        cell.activityIndicator.hidden = true
+        
         
         
         return cell
@@ -300,6 +319,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         
         // on New Collection button pressed, delete the results in "photos" and do a new fetch
         if toolbarButton.title ==  "New Collection" {
+            
             
             
             
@@ -364,10 +384,10 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                                     
                                 }
                             }
-
+                            
                             
                         }
-
+                        
                     }
                     
                     do {
@@ -382,11 +402,17 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 
             }
             
-            
-            
-            //            FetchImages().fetchImages(latitude, longitude: longitude)
-            //            FetchImages().fetchNewCollection(latitude, longitude: longitude)
-            
+            FetchImages().fetchImages(latitude, longitude: longitude)
+            {(success, error, results) in
+                if success {
+                    print("This should be refreshing")
+                    self.refresh_data()
+                    self.do_collection_refresh()
+                    
+                } else {
+                    
+                }
+            }
             
         }
         

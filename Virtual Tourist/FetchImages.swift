@@ -93,7 +93,11 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                                 newPhoto.setValue("/\(imageID).jpg", forKey: "imageURL")
                                                                 
                                                                 let photos = result.mutableSetValueForKey("photos")
-                                                                photos.addObject(newPhoto)
+                                                                
+                                                                if let photosObject = photos as? NSMutableSet {
+                                                                    photosObject.addObject(newPhoto)
+                                                                }
+                                                                
                                                             }
                                                         }
                                                     } catch {
@@ -107,11 +111,12 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                         print("There was a problem saving")
                                                     }
                                                     
-                                                    
-                
+                                                 
+                                                    let viewController = UIApplication.sharedApplication().windows[0].rootViewController?.childViewControllers[1] as? PhotoAlbumViewController
+                                                    viewController?.refresh_data()
                                                     
                                                 }
-   
+                                                
                                             }
                                         }
                                         task.resume()
@@ -123,8 +128,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                         }
                     }
                     
-                    print("Done fetching data")
-                                                        completionHandler(success: true, error: nil, results: "Success")
+                    completionHandler(success: true, error: nil, results: "Success")
                     
                     
                 } catch {
