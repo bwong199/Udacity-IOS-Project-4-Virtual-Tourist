@@ -256,38 +256,46 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MyCollectionViewCell
         
         
-      
-        
-        cell.activityIndicator.color = UIColor.whiteColor()
-        cell.activityIndicator.startAnimating()
-        cell.activityIndicator.hidden = false
-        
-        
         if cell.myImage.image != nil {
+            cell.layer.shouldRasterize = true
+            cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+            
+            let imagePath  = self.items[indexPath.item]
+            
+            cell.myImage.image = UIImage(named: imagePath)
+            cell.layer.shouldRasterize = true
+            cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+            
+            
+            cell.backgroundColor = UIColor.whiteColor()
+            
             cell.activityIndicator.stopAnimating()
             cell.activityIndicator.hidden = true
-            
+        
 
+        } else {
+            cell.activityIndicator.color = UIColor.whiteColor()
+            cell.activityIndicator.startAnimating()
+            cell.activityIndicator.hidden = false
         }
         
-        
 
         
-        cell.layer.shouldRasterize = true
-        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-        
-        let imagePath  = self.items[indexPath.item]
-        
-        cell.myImage.image = UIImage(named: imagePath)
-        cell.layer.shouldRasterize = true
-        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-        
-        
-        cell.backgroundColor = UIColor.whiteColor()
-        
-        cell.activityIndicator.stopAnimating()
-        cell.activityIndicator.hidden = true
-        
+
+//        cell.layer.shouldRasterize = true
+//        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+//        
+//        let imagePath  = self.items[indexPath.item]
+//        
+//        cell.myImage.image = UIImage(named: imagePath)
+//        cell.layer.shouldRasterize = true
+//        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+//        
+//        
+//        cell.backgroundColor = UIColor.whiteColor()
+//        
+//        cell.activityIndicator.stopAnimating()
+//        cell.activityIndicator.hidden = true
         
         
         return cell

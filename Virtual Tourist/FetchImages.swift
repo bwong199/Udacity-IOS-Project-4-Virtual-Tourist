@@ -108,6 +108,8 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                                     
                                                                     do {
                                                                         try photosObject.addObject(newPhoto)
+                                                                        try context.save()
+
                                                                     } catch {
                                                                         print("There was a problem saving")
                                                                     }
@@ -118,14 +120,14 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                     } catch {
                                                     }
                                                     
-                                                    do {
-                                                        
-                                                        try context.save()
-                                                        print("Saved Successfully")
-                                                    } catch {
-                                                        print("There was a problem saving")
-                                                    }
-                                                    
+//                                                    do {
+//                                                        
+//                                                        try context.save()
+//                                                        print("Saved Successfully")
+//                                                    } catch {
+//                                                        print("There was a problem saving")
+//                                                    }
+//                                                    
                                                     
                                                     //                                                    let viewController = UIApplication.sharedApplication().windows[0].rootViewController?.childViewControllers[1] as? PhotoAlbumViewController
                                                     //                                                    viewController?.refresh_data()
@@ -278,6 +280,9 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                                     
                                                                     do {
                                                                         try photosObject.addObject(newPhoto)
+                                                                    
+                                                                        try context.save()
+                                                                        //   print("Saved Successfully")
                                                                     } catch {
                                                                         print("There was a problem saving")
                                                                     }
@@ -288,13 +293,13 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                     } catch {
                                                     }
                                                     
-                                                    do {
-                                                        
-                                                        try context.save()
-//                                                        print("Saved Successfully")
-                                                    } catch {
-                                                        print("There was a problem saving")
-                                                    }
+//                                                    do {
+//                                                        
+//                                                        try context.save()
+////                                                        print("Saved Successfully")
+//                                                    } catch {
+//                                                        print("There was a problem saving")
+//                                                    }
                                                     
                                                     
                                                     
