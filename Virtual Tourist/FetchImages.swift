@@ -337,31 +337,31 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                                         //                                                                print("/\(imageID).jpg")
                                                                         newPhoto.setValue("/\(imageID).jpg", forKey: "imageURL")
                                                                         
-                                                                        let photos = result.mutableSetValueForKey("photos")
-                                                                        
-                                                                        if let photosObject = photos as? NSMutableSet {
-                                                                            let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
-                                                                            privateContext.persistentStoreCoordinator = context.persistentStoreCoordinator
-                                                                            privateContext.performBlock {
-                                                                                // Code in here is now running "in the background" and can safely
-                                                                                // do anything in privateContext.
-                                                                                // This is where you will create your entities and save them.
-                                                                                do {
-                                                                                    try photosObject.addObject(newPhoto)
+                                                                        if let photos = result.mutableSetValueForKey("photos") as? NSMutableSet{
+                                                                            if let photosObject = photos as? NSMutableSet {
+                                                                                let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+                                                                                privateContext.persistentStoreCoordinator = context.persistentStoreCoordinator
+                                                                                privateContext.performBlock {
+                                                                                    // Code in here is now running "in the background" and can safely
+                                                                                    // do anything in privateContext.
+                                                                                    // This is where you will create your entities and save them.
+                                                                                    do {
+                                                                                        try photosObject.addObject(newPhoto)
+                                                                                        
+                                                                                        try context.save()
+                                                                                        
+                                                                                        
+                                                                                        //   print("Saved Successfully")
+                                                                                    } catch {
+                                                                                        print("There was a problem saving")
+                                                                                    }
                                                                                     
-                                                                                    try context.save()
                                                                                     
-                                                                                    
-                                                                                    //   print("Saved Successfully")
-                                                                                } catch {
-                                                                                    print("There was a problem saving")
                                                                                 }
                                                                                 
-                                                                                
                                                                             }
-                                                                            
                                                                         }
-                                                                        
+   
                                                                     }
                                                                 }
                                                             } catch {
