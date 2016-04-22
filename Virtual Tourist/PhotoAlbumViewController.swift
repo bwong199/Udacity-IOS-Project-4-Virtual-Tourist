@@ -94,7 +94,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         if let index = indexPath {
             var cell = self.collectionView.cellForItemAtIndexPath(index)
             // do stuff with your cell, for example print the indexPath
-//            print(index.row)
+            //            print(index.row)
             
             items.removeAtIndex(index.row)
             
@@ -160,7 +160,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         let qualityOfServiceClass = QOS_CLASS_BACKGROUND
         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
         dispatch_async(backgroundQueue, {
-//            print("This is run on the background queue")
+            //            print("This is run on the background queue")
             
             let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
             
@@ -226,14 +226,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 print("Fetch Failed")
             }
             
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                
-                for x in self.items {
-//                    print(self.items.indexOf(x))
-                }
-                
-                
-            })
         })
     }
     
@@ -256,46 +248,48 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MyCollectionViewCell
         
         
-        if cell.myImage.image != nil {
-            cell.layer.shouldRasterize = true
-            cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-            
-            let imagePath  = self.items[indexPath.item]
-            
-            cell.myImage.image = UIImage(named: imagePath)
-            cell.layer.shouldRasterize = true
-            cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-            
-            
-            cell.backgroundColor = UIColor.whiteColor()
-            
-            cell.activityIndicator.stopAnimating()
-            cell.activityIndicator.hidden = true
+//        if cell.myImage.image != nil {
+//            cell.layer.shouldRasterize = true
+//            cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+//            
+//            let imagePath  = self.items[indexPath.item]
+//            
+//            cell.myImage.image = UIImage(named: imagePath)
+//            cell.layer.shouldRasterize = true
+//            cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+//
+//            cell.backgroundColor = UIColor.whiteColor()
+//
+//            dispatch_async(dispatch_get_main_queue(), {
+//                cell.activityIndicator.stopAnimating()
+//                cell.activityIndicator.hidden = true
+//            })
+//    
+//        } else {
+//            dispatch_async(dispatch_get_main_queue(), {
+//                cell.activityIndicator.color = UIColor.whiteColor()
+//                cell.activityIndicator.startAnimating()
+//                cell.activityIndicator.hidden = false
+//            })
+//        }
         
-
-        } else {
-            cell.activityIndicator.color = UIColor.whiteColor()
-            cell.activityIndicator.startAnimating()
-            cell.activityIndicator.hidden = false
-        }
         
-
         
-
-//        cell.layer.shouldRasterize = true
-//        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-//        
-//        let imagePath  = self.items[indexPath.item]
-//        
-//        cell.myImage.image = UIImage(named: imagePath)
-//        cell.layer.shouldRasterize = true
-//        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-//        
-//        
-//        cell.backgroundColor = UIColor.whiteColor()
-//        
-//        cell.activityIndicator.stopAnimating()
-//        cell.activityIndicator.hidden = true
+        
+                cell.layer.shouldRasterize = true
+                cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+        
+                let imagePath  = self.items[indexPath.item]
+        
+                cell.myImage.image = UIImage(named: imagePath)
+                cell.layer.shouldRasterize = true
+                cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+        
+        
+                cell.backgroundColor = UIColor.whiteColor()
+        
+                cell.activityIndicator.stopAnimating()
+                cell.activityIndicator.hidden = true
         
         
         return cell
@@ -332,7 +326,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         
         // on New Collection button pressed, delete the results in "photos" and do a new fetch
         if toolbarButton.title ==  "New Collection" {
-                        dispatch_async(dispatch_get_main_queue(), {
+            dispatch_async(dispatch_get_main_queue(), {
                 
                 self.items.removeAll()
                 self.do_collection_refresh()
@@ -358,7 +352,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 let results = try context.executeFetchRequest(request)
                 //                print(results)
                 if results.count > 0 {
-                 
+                    
                     for result in results as! [NSManagedObject] {
                         
                         for result in results as! [NSManagedObject] {
@@ -368,7 +362,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                             
                             for x in photosArray {
                                 //                                print(Mirror(reflecting: x))
-//                                print(x.valueForKey("imageURL"))
+                                //                                print(x.valueForKey("imageURL"))
                                 
                                 // delete from Core Data
                                 context.deleteObject(x as! NSManagedObject)
@@ -384,7 +378,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                                     
                                     let removePath = documentsDirectory! + String(x.valueForKey("imageURL")!)
                                     
-//                                    print(removePath)
+                                    //                                    print(removePath)
                                     
                                     do {
                                         try NSFileManager.defaultManager().removeItemAtPath(removePath)
@@ -417,8 +411,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 if success {
                     self.refresh_data()
                     self.do_collection_refresh()
-              
-
+                    
+                    
                 } else {
                     
                 }

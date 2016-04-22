@@ -82,22 +82,22 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         } catch {
             print("There was a problem!")
         }
-//        
-//        // We need just to get the documents folder url
-//        let documentsUrl =  NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
-//        
-////                 now lets get the directory contents (including folders)
-//                do {
-//                    let directoryContents = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(documentsUrl, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions())
-//                    print(directoryContents)
-//        
-//                    for x in directoryContents {
-//                        print(x)
-//                    }
-//        
-//                } catch let error as NSError {
-//                    print(error.localizedDescription)
-//                }
+        
+        // We need just to get the documents folder url
+        let documentsUrl =  NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
+        
+//                 now lets get the directory contents (including folders)
+                do {
+                    let directoryContents = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(documentsUrl, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions())
+                    print(directoryContents)
+        
+                    for x in directoryContents {
+                        print(x)
+                    }
+        
+                } catch let error as NSError {
+                    print(error.localizedDescription)
+                }
     }
     
     
@@ -152,15 +152,17 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             FetchImages().fetchImages(roundLatitude, longitude: roundLongitude)
             {(success, error, results) in
                 if success {
-                    
-                    
+
                     dispatch_async(dispatch_get_main_queue(), {
                         self.activityIndicator.stopAnimating()
                         self.activityIndicator.hidden = true
                     })
-                    
                 } else {
-                    
+                    dispatch_async(dispatch_get_main_queue(), {
+                        var alert = UIAlertView(title: "No Picture Found", message: "No Picture was Found for this Location", delegate: nil, cancelButtonTitle: "OK")
+                        alert.show()
+                    })
+
                 }
             }
             

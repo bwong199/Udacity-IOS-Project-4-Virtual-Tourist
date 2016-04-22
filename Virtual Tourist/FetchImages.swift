@@ -14,7 +14,7 @@ import CoreLocation
 class FetchImages: UIViewController, MKMapViewDelegate {
     
     
-    func fetchImages (latitude: Double, longitude: Double, completionHandler:(success: Bool, error: String?, results: String?) -> Void){
+    func fetchImages (latitude: Double, longitude: Double, completionHandler:(success: Bool, error: Bool, results: String?) -> Void){
         print("Fetching Images")
         let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
@@ -39,10 +39,18 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                     let jsonResult =  try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
                     
                     if jsonResult.count > 0 {
-                        
+                        //                        print(jsonResult)
                         if let items = jsonResult["photos"] as? NSDictionary {
                             
-                            print(items["pages"])
+                            if let pages = items["pages"] as? NSObject {
+                                if pages  == 0 {
+                                    
+                                    
+                                    completionHandler(success: false, error: true, results: "Failed")
+                                    
+                                }
+                            }
+                            
                             
                             if let photoItems = items["photo"] as? NSArray {
                                 
@@ -108,8 +116,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                                     
                                                                     do {
                                                                         try photosObject.addObject(newPhoto)
-                                                                        try context.save()
-
+                                                                        
                                                                     } catch {
                                                                         print("There was a problem saving")
                                                                     }
@@ -120,17 +127,21 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                     } catch {
                                                     }
                                                     
-//                                                    do {
-//                                                        
-//                                                        try context.save()
-//                                                        print("Saved Successfully")
-//                                                    } catch {
-//                                                        print("There was a problem saving")
-//                                                    }
-//                                                    
+                                                    do {
+                                                        
+                                                        try context.save()
+                                                        print("Saved Successfully")
+                                                    } catch {
+                                                        print("There was a problem saving")
+                                                    }
+                                                    //
                                                     
-                                                    //                                                    let viewController = UIApplication.sharedApplication().windows[0].rootViewController?.childViewControllers[1] as? PhotoAlbumViewController
-                                                    //                                                    viewController?.refresh_data()
+                                                    //                                                        do {
+                                                    //                                                            let viewController = try UIApplication.sharedApplication().windows[0].rootViewController?.childViewControllers[1] as? PhotoAlbumViewController
+                                                    //                                                            try viewController?.refresh_data()
+                                                    //                                                        } catch {
+                                                    //
+                                                    //                                                        }
                                                     
                                                 }
                                                 
@@ -141,11 +152,16 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                         
                                     }
                                 }
+                                
                             }
+                            
+                            
+                            
+                            
                         }
                     }
                     
-                    completionHandler(success: true, error: nil, results: "Success")
+                    completionHandler(success: true, error: false, results: "Success")
                     
                     
                 } catch {
@@ -226,6 +242,9 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                             
                             print(items["pages"])
                             
+                            
+                            
+                            
                             if let photoItems = items["photo"] as? NSArray {
                                 
                                 for item in photoItems {
@@ -280,7 +299,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                                     
                                                                     do {
                                                                         try photosObject.addObject(newPhoto)
-                                                                    
+                                                                        
                                                                         try context.save()
                                                                         //   print("Saved Successfully")
                                                                     } catch {
@@ -293,13 +312,13 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                     } catch {
                                                     }
                                                     
-//                                                    do {
-//                                                        
-//                                                        try context.save()
-////                                                        print("Saved Successfully")
-//                                                    } catch {
-//                                                        print("There was a problem saving")
-//                                                    }
+                                                    //                                                    do {
+                                                    //
+                                                    //                                                        try context.save()
+                                                    ////                                                        print("Saved Successfully")
+                                                    //                                                    } catch {
+                                                    //                                                        print("There was a problem saving")
+                                                    //                                                    }
                                                     
                                                     
                                                     
