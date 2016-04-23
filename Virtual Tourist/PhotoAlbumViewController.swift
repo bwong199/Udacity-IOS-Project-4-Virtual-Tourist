@@ -472,15 +472,18 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 FetchImages().fetchNewCollection(self.latitude, longitude: self.longitude)
                 {(success, error, results) in
                     if success {
-                        self.refresh_data()
-                        self.do_collection_refresh()
-                        self.toolbarButton.enabled = true
-                        self.toolbarButton.tintColor =  UIColor.blackColor()
-                    } else {
-                        self.toolbarButton.enabled = true
-                        self.toolbarButton.tintColor =  UIColor.blackColor()
                         dispatch_async(dispatch_get_main_queue(), {
-                            
+                            self.refresh_data()
+                            self.do_collection_refresh()
+                            self.toolbarButton.enabled = true
+                            self.toolbarButton.tintColor =  UIColor.blackColor()
+                        })
+
+                    } else {
+
+                        dispatch_async(dispatch_get_main_queue(), {
+                            self.toolbarButton.enabled = true
+                            self.toolbarButton.tintColor =  UIColor.blackColor()
                             
                             let alertController = UIAlertController(title: "No Picture Found", message:
                                 "No Picture was Found for this Location", preferredStyle: UIAlertControllerStyle.Alert)
