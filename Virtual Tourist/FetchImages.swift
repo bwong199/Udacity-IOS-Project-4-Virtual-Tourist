@@ -35,7 +35,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                 
                
                 // Fetch Flickr pictures baesd on geolocation
-                let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=12")! ;
+                let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=24")! ;
                 
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url){(data, response, error) -> Void in
                     if let data = data {
@@ -262,7 +262,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
              convertedPages = UInt32(pages)
             
             //Flickr limits photos per query of 4000. Take 4000 divided number of pictures per page(12)
-             myRandom = arc4random_uniform(min(convertedPages, 100))
+             myRandom = arc4random_uniform(min(convertedPages/24, 50))
             
             
             
@@ -270,7 +270,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
             
         }
             // Fetch Flickr pictures baesd on geolocation
-            let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=12&page=\(myRandom)")! ;
+            let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=24&page=\(myRandom)")! ;
         
             print(url)
             
