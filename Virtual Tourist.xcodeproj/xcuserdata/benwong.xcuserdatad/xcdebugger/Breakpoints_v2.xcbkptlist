@@ -88,12 +88,12 @@
                   moduleName = "Virtual Tourist"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/benwong/Desktop/IOS/VirtualTourist/Virtual%20Tourist/FetchImages.swift"
-                  timestampString = "483070029.654961"
+                  timestampString = "483139817.751285"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "0"
                   endingLineNumber = "0"
-                  offsetFromSymbolStart = "4">
+                  offsetFromSymbolStart = "12">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -103,12 +103,27 @@
                   moduleName = "Virtual Tourist"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/benwong/Desktop/IOS/VirtualTourist/Virtual%20Tourist/FetchImages.swift"
-                  timestampString = "483070029.655127"
+                  timestampString = "483139817.751522"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "14"
                   endingLineNumber = "14"
-                  offsetFromSymbolStart = "107">
+                  offsetFromSymbolStart = "116">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Virtual_Tourist.FetchImages.init (coder : __ObjC.NSCoder) -&gt; Swift.Optional&lt;Virtual_Tourist.FetchImages&gt;"
+                  moduleName = "Virtual Tourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/benwong/Desktop/IOS/VirtualTourist/Virtual%20Tourist/FetchImages.swift"
+                  timestampString = "483139817.751728"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "14"
+                  endingLineNumber = "14"
+                  offsetFromSymbolStart = "192">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -120,7 +135,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Virtual Tourist/PhotoAlbumViewController.swift"
-            timestampString = "482434475.548496"
+            timestampString = "483139573.276163"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "45"
@@ -136,11 +151,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Virtual Tourist/PhotoAlbumViewController.swift"
-            timestampString = "483069687.49691"
+            timestampString = "483141680.823995"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "181"
-            endingLineNumber = "181"
+            startingLineNumber = "185"
+            endingLineNumber = "185"
             landmarkName = "refresh_data()"
             landmarkType = "5">
          </BreakpointContent>
@@ -168,12 +183,12 @@
                   moduleName = "Virtual Tourist"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/benwong/Desktop/IOS/VirtualTourist/Virtual%20Tourist/DetailImageController.swift"
-                  timestampString = "483070029.657184"
+                  timestampString = "483139817.753751"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "0"
                   endingLineNumber = "0"
-                  offsetFromSymbolStart = "4">
+                  offsetFromSymbolStart = "12">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -183,12 +198,12 @@
                   moduleName = "Virtual Tourist"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/benwong/Desktop/IOS/VirtualTourist/Virtual%20Tourist/DetailImageController.swift"
-                  timestampString = "483070029.657383"
+                  timestampString = "483139817.75398"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "13"
                   endingLineNumber = "13"
-                  offsetFromSymbolStart = "90">
+                  offsetFromSymbolStart = "80">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -198,7 +213,7 @@
                   moduleName = "Virtual Tourist"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/benwong/Desktop/IOS/VirtualTourist/Virtual%20Tourist/DetailImageController.swift"
-                  timestampString = "483070029.657514"
+                  timestampString = "483139817.754171"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "13"
@@ -231,11 +246,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Virtual Tourist/FetchImages.swift"
-            timestampString = "483125170.329366"
+            timestampString = "483137106.069195"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "263"
-            endingLineNumber = "263"
+            startingLineNumber = "267"
+            endingLineNumber = "267"
             landmarkName = "fetchNewCollection(_:longitude:completionHandler:)"
             landmarkType = "5">
          </BreakpointContent>

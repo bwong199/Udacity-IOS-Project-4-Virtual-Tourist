@@ -19,7 +19,7 @@ class MyCollectionViewCell: UICollectionViewCell {
 //    
     override func awakeFromNib() {
         super.awakeFromNib()
-        
+        self.activityIndicator.startAnimating()
         updateWithImage(nil)
     }
     

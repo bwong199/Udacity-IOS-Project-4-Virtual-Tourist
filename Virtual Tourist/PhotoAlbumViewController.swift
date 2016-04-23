@@ -43,6 +43,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         //        FetchImages().fetchNewCollection(latitude, longitude: longitude)
         
         toolbarButton.title = "New Collection"
+        toolbarButton.tintColor =  UIColor.blackColor()
         
         let latitudeAnn:CLLocationDegrees = self.latitude
         let longitudeAnn:CLLocationDegrees = self.longitude
@@ -81,6 +82,9 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         lpgr.delaysTouchesBegan = true
         lpgr.delegate = self
         self.collectionView.addGestureRecognizer(lpgr)
+        
+        
+
     }
     
     // long press to delete
@@ -108,7 +112,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 
                 let removePath = items[index.row]
                 
-//                print(removePath)
+                //                print(removePath)
                 
                 do {
                     try NSFileManager.defaultManager().removeItemAtPath(removePath)
@@ -179,9 +183,10 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     }
     
     public func  refresh_data(){
-        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        dispatch_async(backgroundQueue, {
+        // Run this in main thread
+        dispatch_async(dispatch_get_main_queue(),{
+            
+            
             //            print("This is run on the background queue")
             
             let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
@@ -261,7 +266,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                         print("Fetch Failed")
                     }
                 }
-     
+                
             }
             
             
@@ -287,32 +292,41 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         // get a reference to our storyboard cell
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MyCollectionViewCell
         
+        cell.activityIndicator.color = UIColor.whiteColor()
+        cell.activityIndicator.startAnimating()
+        cell.activityIndicator.hidden = false
         
-        if cell.myImage.image != nil {
-            dispatch_async(dispatch_get_main_queue(), {
+
+        
                 cell.activityIndicator.color = UIColor.whiteColor()
                 cell.activityIndicator.startAnimating()
                 cell.activityIndicator.hidden = false
-            })
-            
-        } else {
-            
-            cell.layer.shouldRasterize = true
-            cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-            
-            let imagePath  = self.items[indexPath.item]
-            
-            cell.myImage.image = UIImage(named: imagePath)
-            cell.layer.shouldRasterize = true
-            cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-            
-            cell.backgroundColor = UIColor.whiteColor()
-            
-            dispatch_async(dispatch_get_main_queue(), {
-                cell.activityIndicator.stopAnimating()
-                cell.activityIndicator.hidden = true
-            })
-        }
+        
+                if cell.myImage.image != nil {
+                    dispatch_async(dispatch_get_main_queue(), {
+                        cell.activityIndicator.color = UIColor.whiteColor()
+                        cell.activityIndicator.startAnimating()
+                        cell.activityIndicator.hidden = false
+                    })
+        
+                } else {
+        
+        
+                    cell.layer.shouldRasterize = true
+                    cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+        
+                    let imagePath  = self.items[indexPath.item]
+        
+                    cell.myImage.image = UIImage(named: imagePath)
+                    cell.layer.shouldRasterize = true
+                    cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+        
+                    dispatch_async(dispatch_get_main_queue(), {
+                        cell.activityIndicator.stopAnimating()
+                        cell.activityIndicator.hidden = true
+        
+                    })
+                }
         
         
         
@@ -368,6 +382,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         // on New Collection button pressed, delete the results in "photos" and do a new fetch
         if toolbarButton.title ==  "New Collection" {
             toolbarButton.enabled = false
+            toolbarButton.tintColor = UIColor.whiteColor()
             //            dispatch_async(dispatch_get_main_queue(), {
             //
             //                self.items.removeAll()
@@ -407,9 +422,9 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                                 
                                 do {
                                     try context.save()
-//                                    print("Successfully deleted images from Core Data")
+                                    //                                    print("Successfully deleted images from Core Data")
                                 } catch {
-//                                    print("Error deleting images")
+                                    //                                    print("Error deleting images")
                                 }
                                 
                             }
@@ -433,7 +448,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                             
                             do {
                                 try NSFileManager.defaultManager().removeItemAtPath(removePath)
-//                                print("Successfully removed image from Documents Directory")
+                                //                                print("Successfully removed image from Documents Directory")
                             } catch {
                                 
                             }
@@ -460,103 +475,22 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                         self.refresh_data()
                         self.do_collection_refresh()
                         self.toolbarButton.enabled = true
-                        
+                        self.toolbarButton.tintColor =  UIColor.blackColor()
                     } else {
-                        
+                        self.toolbarButton.enabled = true
+                        self.toolbarButton.tintColor =  UIColor.blackColor()
+                        dispatch_async(dispatch_get_main_queue(), {
+                            
+                            
+                            let alertController = UIAlertController(title: "No Picture Found", message:
+                                "No Picture was Found for this Location", preferredStyle: UIAlertControllerStyle.Alert)
+                            alertController.addAction(UIAlertAction(title: "No Picture Found", style: UIAlertActionStyle.Default,handler: nil))
+                            
+                            self.presentViewController(alertController, animated: true, completion: nil)
+                        })
                     }
                 }
                 
-                
-                //old codes to delete old photoes
-                //                let request = NSFetchRequest(entityName: "Pin")
-                //
-                //                request.returnsObjectsAsFaults = false
-                //
-                //                let firstPredicate = NSPredicate(format: "latitude == \(self.latitude)")
-                //
-                //                let secondPredicate = NSPredicate(format: "longitude == \(self.longitude)")
-                //
-                //
-                //                request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
-                //                do {
-                //                    let results = try context.executeFetchRequest(request)
-                //                    //                print(results)
-                //                    if results.count > 0 {
-                //
-                //                        for result in results as! [NSManagedObject] {
-                //
-                //                            for result in results as! [NSManagedObject] {
-                //                                //                            print(result.valueForKey("photos")! )
-                //                                //                             check to see if there's any photos under **this** pin, if not do a fetch image
-                //                                let photosArray = result.valueForKey("photos")?.allObjects as! NSArray
-                //
-                //                                for x in photosArray {
-                //                                    //                                print(Mirror(reflecting: x))
-                //                                    //                                print(x.valueForKey("imageURL"))
-                //
-                //                                    if let x = x.valueForKey("imageURL") as? NSManagedObject {
-                //                                        // delete from Core Data
-                //
-                ////                                        do {
-                //                                            try context.deleteObject(x )
-                //                                            print("Successfully deleted")
-                ////                                        } catch {
-                ////
-                ////                                        }
-                //
-                //
-                //                                        //remove from directory
-                //                                        var documentsDirectory: String?
-                //
-                //                                        var paths:[AnyObject] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-                //
-                //                                        if paths.count > 0 {
-                //
-                //                                            documentsDirectory = paths[0] as? String
-                //
-                //                                            //                                        let savePath = documentsDirectory! + "/\(imageID).jpg"
-                //
-                //
-                //                                            let removePath = documentsDirectory! + String(x.valueForKey("imageURL")!)
-                //
-                //                                            print("removePath \(removePath)" )
-                //
-                //                                            do {
-                //                                                try NSFileManager.defaultManager().removeItemAtPath(removePath)
-                //                                            } catch {
-                //
-                //                                            }
-                //
-                //                                        }
-                //                                    }
-                //
-                //
-                //                                }
-                //
-                //
-                //                            }
-                //
-                //                        }
-                //
-                //
-                //                        let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
-                //                        privateContext.persistentStoreCoordinator = context.persistentStoreCoordinator
-                //                        privateContext.performBlock {
-                //                            do {
-                //
-                //                                try context.save()
-                //                                print("Saved Successfully")
-                //                            } catch {
-                //                                print("There was a problem saving")
-                //                            }
-                //
-                //                        }
-                //
-                //                    }
-                //
-                //                } catch {
-                //
-                //                }
                 
                 
                 
@@ -564,7 +498,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             
             
         }
-        self.toolbarButton.enabled = true
+        
     }
     
     
