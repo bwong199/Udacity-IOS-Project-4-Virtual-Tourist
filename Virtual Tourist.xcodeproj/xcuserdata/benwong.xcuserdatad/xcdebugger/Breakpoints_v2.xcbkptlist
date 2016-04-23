@@ -88,7 +88,7 @@
                   moduleName = "Virtual Tourist"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/benwong/Desktop/IOS/VirtualTourist/Virtual%20Tourist/FetchImages.swift"
-                  timestampString = "483043764.260654"
+                  timestampString = "483070029.654961"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "0"
@@ -103,27 +103,12 @@
                   moduleName = "Virtual Tourist"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/benwong/Desktop/IOS/VirtualTourist/Virtual%20Tourist/FetchImages.swift"
-                  timestampString = "483043764.260836"
+                  timestampString = "483070029.655127"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "14"
                   endingLineNumber = "14"
                   offsetFromSymbolStart = "107">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Virtual_Tourist.FetchImages.init (coder : __ObjC.NSCoder) -&gt; Swift.Optional&lt;Virtual_Tourist.FetchImages&gt;"
-                  moduleName = "Virtual Tourist"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/benwong/Desktop/IOS/VirtualTourist/Virtual%20Tourist/FetchImages.swift"
-                  timestampString = "483043764.260962"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "14"
-                  endingLineNumber = "14"
-                  offsetFromSymbolStart = "105">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -151,11 +136,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Virtual Tourist/PhotoAlbumViewController.swift"
-            timestampString = "483036733.725399"
+            timestampString = "483069687.49691"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "171"
-            endingLineNumber = "171"
+            startingLineNumber = "181"
+            endingLineNumber = "181"
             landmarkName = "refresh_data()"
             landmarkType = "5">
          </BreakpointContent>
@@ -183,7 +168,7 @@
                   moduleName = "Virtual Tourist"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/benwong/Desktop/IOS/VirtualTourist/Virtual%20Tourist/DetailImageController.swift"
-                  timestampString = "483043764.26479"
+                  timestampString = "483070029.657184"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "0"
@@ -198,7 +183,7 @@
                   moduleName = "Virtual Tourist"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/benwong/Desktop/IOS/VirtualTourist/Virtual%20Tourist/DetailImageController.swift"
-                  timestampString = "483043764.264951"
+                  timestampString = "483070029.657383"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "13"
@@ -213,7 +198,7 @@
                   moduleName = "Virtual Tourist"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/benwong/Desktop/IOS/VirtualTourist/Virtual%20Tourist/DetailImageController.swift"
-                  timestampString = "483043764.265074"
+                  timestampString = "483070029.657514"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "13"
@@ -242,31 +227,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Virtual Tourist/PhotoAlbumViewController.swift"
-            timestampString = "483041973.365184"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "378"
-            endingLineNumber = "378"
-            landmarkName = "toolbarButtonAction(_:)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Virtual Tourist/FetchImages.swift"
-            timestampString = "483043764.217369"
+            timestampString = "483125170.329366"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "264"
-            endingLineNumber = "264"
+            startingLineNumber = "263"
+            endingLineNumber = "263"
             landmarkName = "fetchNewCollection(_:longitude:completionHandler:)"
             landmarkType = "5">
          </BreakpointContent>

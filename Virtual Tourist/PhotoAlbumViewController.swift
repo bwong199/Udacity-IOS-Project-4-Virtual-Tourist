@@ -34,7 +34,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
     
     
     var items : [String] = []
-    
+    var itemsForDelete : [String] = []
     
     
     override func viewDidLoad() {
@@ -96,7 +96,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             // do stuff with your cell, for example print the indexPath
             //            print(index.row)
             
-            items.removeAtIndex(index.row)
             
             //remove from directory
             var documentsDirectory: String?
@@ -107,7 +106,9 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 
                 documentsDirectory = paths[0] as? String
                 
-                let removePath = documentsDirectory! + items[index.row]
+                let removePath = items[index.row]
+                
+//                print(removePath)
                 
                 do {
                     try NSFileManager.defaultManager().removeItemAtPath(removePath)
@@ -116,6 +117,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 }
                 
             }
+            
+            
             // Find the Pin to which the images should be downloaded and delete that image
             let request = NSFetchRequest(entityName: "Pin")
             
@@ -125,7 +128,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             
             let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
             privateContext.persistentStoreCoordinator = context.persistentStoreCoordinator
-            privateContext.performBlock {
+            privateContext.performBlockAndWait {
                 // Code in here is now running "in the background" and can safely
                 // do anything in privateContext.
                 // This is where you will create your entities and save them.
@@ -158,7 +161,14 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 } catch {
                     print("There was a problem saving")
                 }
+                
+                
             }
+            
+            items.removeAtIndex(index.row)
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+                self.do_collection_refresh()
+            })
         } else {
             print("Could not find index path")
         }
@@ -180,7 +190,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             
             let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
             privateContext.persistentStoreCoordinator = context.persistentStoreCoordinator
-            privateContext.performBlock {
+            privateContext.performBlockAndWait {
                 // Code in here is now running "in the background" and can safely
                 // do anything in privateContext.
                 // This is where you will create your entities and save them.
@@ -196,56 +206,65 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                 
                 //        request.predicate = NSPredicate(format: "latitude == %f", latitude)
                 
-                do {
-                    
-                    let results = try context.executeFetchRequest(request)
-                    
-                    
-                    if results.count > 0 {
-                        for result in results as! [NSManagedObject] {
-                            //                        print(result)
-                            //                        print(result.valueForKey("photos")! )
-                            // check to see if there's any photos under **this** pin, if not do a fetch image
-                            print("Number of pages \(result.valueForKey("pages"))" )
-                            if let photos =  (result.valueForKey("photos")?.allObjects)! as? NSArray {
-                                //                            // not worrking
-                                //                            print(photos)
-                                if photos.count > 0 {
-                                    for photo in photos {
-                                        //
-                                        var documentsDirectory: String?
-                                        
-                                        var paths:[AnyObject] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-                                        
-                                        documentsDirectory = paths[0] as? String
-                                        
-                                        dispatch_async(dispatch_get_main_queue(), {
-                                            if let imagePath = photo.valueForKey("imageURL") as? String {
-                                                let savePath = documentsDirectory! + imagePath
-                                                
-                                                if !self.items.contains(savePath){
+                let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+                privateContext.persistentStoreCoordinator = context.persistentStoreCoordinator
+                privateContext.performBlockAndWait {
+                    do {
+                        
+                        let results = try context.executeFetchRequest(request)
+                        
+                        
+                        if results.count > 0 {
+                            for result in results as! [NSManagedObject] {
+                                //                        print(result)
+                                //                        print(result.valueForKey("photos")! )
+                                // check to see if there's any photos under **this** pin, if not do a fetch image
+                                //                            print("Number of pages \(result.valueForKey("pages"))" )
+                                
+                                
+                                if let photos =  (result.valueForKey("photos")?.allObjects)! as? NSArray {
+                                    //                            // not worrking
+                                    //                            print(photos)
+                                    if photos.count > 0 {
+                                        for photo in photos {
+                                            //
+                                            var documentsDirectory: String?
+                                            
+                                            var paths:[AnyObject] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+                                            
+                                            documentsDirectory = paths[0] as? String
+                                            
+                                            dispatch_async(dispatch_get_main_queue(), {
+                                                if let imagePath = photo.valueForKey("imageURL") as? String {
+                                                    let savePath = documentsDirectory! + imagePath
                                                     
-                                                    self.items.append(savePath)
-                                                    self.do_collection_refresh()
+                                                    if !self.items.contains(savePath){
+                                                        
+                                                        self.items.append(savePath)
+                                                        self.itemsForDelete.append(imagePath)
+                                                        
+                                                        self.do_collection_refresh()
+                                                    }
+                                                    
                                                 }
-                                                
-                                            }
-                                            return
-                                        })
+                                                return
+                                            })
+                                        }
+                                    } else {
+                                        
                                     }
-                                } else {
-                                    
                                 }
                             }
                         }
+                        
+                    } catch {
+                        print("Fetch Failed")
                     }
-                    
-                } catch {
-                    print("Fetch Failed")
                 }
+     
             }
             
-
+            
             
         })
     }
@@ -269,49 +288,49 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MyCollectionViewCell
         
         
-                if cell.myImage.image != nil {
-                    dispatch_async(dispatch_get_main_queue(), {
-                        cell.activityIndicator.color = UIColor.whiteColor()
-                        cell.activityIndicator.startAnimating()
-                        cell.activityIndicator.hidden = false
-                    })
-        
-                } else {
-
-                    cell.layer.shouldRasterize = true
-                    cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-                    
-                    let imagePath  = self.items[indexPath.item]
-                    
-                    cell.myImage.image = UIImage(named: imagePath)
-                    cell.layer.shouldRasterize = true
-                    cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-                    
-                    cell.backgroundColor = UIColor.whiteColor()
-                    
-                    dispatch_async(dispatch_get_main_queue(), {
-                        cell.activityIndicator.stopAnimating()
-                        cell.activityIndicator.hidden = true
-                    })
-                }
-        
-        
+        if cell.myImage.image != nil {
+            dispatch_async(dispatch_get_main_queue(), {
+                cell.activityIndicator.color = UIColor.whiteColor()
+                cell.activityIndicator.startAnimating()
+                cell.activityIndicator.hidden = false
+            })
+            
+        } else {
+            
+            cell.layer.shouldRasterize = true
+            cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+            
+            let imagePath  = self.items[indexPath.item]
+            
+            cell.myImage.image = UIImage(named: imagePath)
+            cell.layer.shouldRasterize = true
+            cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+            
+            cell.backgroundColor = UIColor.whiteColor()
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                cell.activityIndicator.stopAnimating()
+                cell.activityIndicator.hidden = true
+            })
+        }
         
         
-//        cell.layer.shouldRasterize = true
-//        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-//        
-//        let imagePath  = self.items[indexPath.item]
-//        
-//        cell.myImage.image = UIImage(named: imagePath)
-//        cell.layer.shouldRasterize = true
-//        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-//        
-//        
-//        cell.backgroundColor = UIColor.whiteColor()
-//        
-//        cell.activityIndicator.stopAnimating()
-//        cell.activityIndicator.hidden = true
+        
+        
+        //        cell.layer.shouldRasterize = true
+        //        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+        //
+        //        let imagePath  = self.items[indexPath.item]
+        //
+        //        cell.myImage.image = UIImage(named: imagePath)
+        //        cell.layer.shouldRasterize = true
+        //        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+        //
+        //
+        //        cell.backgroundColor = UIColor.whiteColor()
+        //
+        //        cell.activityIndicator.stopAnimating()
+        //        cell.activityIndicator.hidden = true
         
         
         return cell
@@ -349,12 +368,12 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
         // on New Collection button pressed, delete the results in "photos" and do a new fetch
         if toolbarButton.title ==  "New Collection" {
             toolbarButton.enabled = false
-            dispatch_async(dispatch_get_main_queue(), {
-                
-                self.items.removeAll()
-                self.do_collection_refresh()
-                
-            })
+            //            dispatch_async(dispatch_get_main_queue(), {
+            //
+            //                self.items.removeAll()
+            //                self.do_collection_refresh()
+            //
+            //            })
             
             let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
             
@@ -362,87 +381,78 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
             
             let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
             privateContext.persistentStoreCoordinator = context.persistentStoreCoordinator
-            privateContext.performBlock {
+            privateContext.performBlockAndWait {
                 // Code in here is now running "in the background" and can safely
                 // do anything in privateContext.
                 // This is where you will create your entities and save them.
                 
-                let request = NSFetchRequest(entityName: "Pin")
-                //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
-                
-                request.returnsObjectsAsFaults = false
-                
-                let firstPredicate = NSPredicate(format: "latitude == \(self.latitude)")
-                
-                let secondPredicate = NSPredicate(format: "longitude == \(self.longitude)")
-                
-                //
-                request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
-                do {
-                    let results = try context.executeFetchRequest(request)
-                    //                print(results)
-                    if results.count > 0 {
+                for item in self.itemsForDelete {
+                    
+                    // delete image from Core Data
+                    let request = NSFetchRequest(entityName: "Photo")
+                    
+                    request.predicate = NSPredicate(format: "imageURL = %@", item)
+                    
+                    request.returnsObjectsAsFaults = false
+                    
+                    // remove from Core Data
+                    do {
+                        let results = try context.executeFetchRequest(request)
                         
-                        for result in results as! [NSManagedObject] {
-                            
+                        if results.count > 0 {
                             for result in results as! [NSManagedObject] {
-                                //                            print(result.valueForKey("photos")! )
-                                //                             check to see if there's any photos under **this** pin, if not do a fetch image
-                                let photosArray = result.valueForKey("photos")?.allObjects as! NSArray
+                                //                                print(result.valueForKey("imageURL"))
                                 
-                                for x in photosArray {
-                                    //                                print(Mirror(reflecting: x))
-                                    //                                print(x.valueForKey("imageURL"))
-                                    
-                                    // delete from Core Data
-                                    context.deleteObject(x as! NSManagedObject)
-                                    
-                                    //remove from directory
-                                    var documentsDirectory: String?
-                                    
-                                    var paths:[AnyObject] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-                                    
-                                    if paths.count > 0 {
-                                        
-                                        documentsDirectory = paths[0] as? String
-                                        
-                                        let removePath = documentsDirectory! + String(x.valueForKey("imageURL")!)
-                                        
-                                        //                                    print(removePath)
-                                        
-                                        do {
-                                            try NSFileManager.defaultManager().removeItemAtPath(removePath)
-                                        } catch {
-                                            
-                                        }
-                                        
-                                    }
+                                context.deleteObject(result)
+                                
+                                do {
+                                    try context.save()
+//                                    print("Successfully deleted images from Core Data")
+                                } catch {
+//                                    print("Error deleting images")
                                 }
                                 
-                                
                             }
-                            
                         }
                         
+                        //remove from directory
+                        var documentsDirectory: String?
                         
-                        let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
-                        privateContext.persistentStoreCoordinator = context.persistentStoreCoordinator
-                        privateContext.performBlock {
+                        var paths:[AnyObject] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+                        
+                        if paths.count > 0 {
+                            
+                            documentsDirectory = paths[0] as? String
+                            
+                            //                                        let savePath = documentsDirectory! + "/\(imageID).jpg"
+                            
+                            
+                            let removePath = documentsDirectory! + item
+                            
+                            //                            print("removePath \(removePath)" )
+                            
                             do {
-                                
-                                try context.save()
-                                print("Saved Successfully")
+                                try NSFileManager.defaultManager().removeItemAtPath(removePath)
+//                                print("Successfully removed image from Documents Directory")
                             } catch {
-                                print("There was a problem saving")
+                                
                             }
                             
                         }
+                        
+                    } catch {
                         
                     }
                     
-                } catch {
                     
                 }
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    
+                    self.items.removeAll()
+                    self.do_collection_refresh()
+                    
+                })
                 
                 FetchImages().fetchNewCollection(self.latitude, longitude: self.longitude)
                 {(success, error, results) in
@@ -455,7 +465,101 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource, UI
                         
                     }
                 }
-
+                
+                
+                //old codes to delete old photoes
+                //                let request = NSFetchRequest(entityName: "Pin")
+                //
+                //                request.returnsObjectsAsFaults = false
+                //
+                //                let firstPredicate = NSPredicate(format: "latitude == \(self.latitude)")
+                //
+                //                let secondPredicate = NSPredicate(format: "longitude == \(self.longitude)")
+                //
+                //
+                //                request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
+                //                do {
+                //                    let results = try context.executeFetchRequest(request)
+                //                    //                print(results)
+                //                    if results.count > 0 {
+                //
+                //                        for result in results as! [NSManagedObject] {
+                //
+                //                            for result in results as! [NSManagedObject] {
+                //                                //                            print(result.valueForKey("photos")! )
+                //                                //                             check to see if there's any photos under **this** pin, if not do a fetch image
+                //                                let photosArray = result.valueForKey("photos")?.allObjects as! NSArray
+                //
+                //                                for x in photosArray {
+                //                                    //                                print(Mirror(reflecting: x))
+                //                                    //                                print(x.valueForKey("imageURL"))
+                //
+                //                                    if let x = x.valueForKey("imageURL") as? NSManagedObject {
+                //                                        // delete from Core Data
+                //
+                ////                                        do {
+                //                                            try context.deleteObject(x )
+                //                                            print("Successfully deleted")
+                ////                                        } catch {
+                ////
+                ////                                        }
+                //
+                //
+                //                                        //remove from directory
+                //                                        var documentsDirectory: String?
+                //
+                //                                        var paths:[AnyObject] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+                //
+                //                                        if paths.count > 0 {
+                //
+                //                                            documentsDirectory = paths[0] as? String
+                //
+                //                                            //                                        let savePath = documentsDirectory! + "/\(imageID).jpg"
+                //
+                //
+                //                                            let removePath = documentsDirectory! + String(x.valueForKey("imageURL")!)
+                //
+                //                                            print("removePath \(removePath)" )
+                //
+                //                                            do {
+                //                                                try NSFileManager.defaultManager().removeItemAtPath(removePath)
+                //                                            } catch {
+                //
+                //                                            }
+                //
+                //                                        }
+                //                                    }
+                //
+                //
+                //                                }
+                //
+                //
+                //                            }
+                //
+                //                        }
+                //
+                //
+                //                        let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+                //                        privateContext.persistentStoreCoordinator = context.persistentStoreCoordinator
+                //                        privateContext.performBlock {
+                //                            do {
+                //
+                //                                try context.save()
+                //                                print("Saved Successfully")
+                //                            } catch {
+                //                                print("There was a problem saving")
+                //                            }
+                //
+                //                        }
+                //
+                //                    }
+                //
+                //                } catch {
+                //
+                //                }
+                
+                
+                
             }
             
             

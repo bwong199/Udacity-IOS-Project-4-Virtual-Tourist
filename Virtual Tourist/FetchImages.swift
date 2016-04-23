@@ -16,9 +16,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
     
     func fetchImages (latitude: Double, longitude: Double, completionHandler:(success: Bool, error: Bool, results: String?) -> Void){
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
-            
-
-            
+ 
             let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
             
             var context: NSManagedObjectContext = appDel.managedObjectContext
@@ -26,7 +24,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
             // Wrapping everything in these codes to make it thread safe
             let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
             privateContext.persistentStoreCoordinator = context.persistentStoreCoordinator
-            privateContext.performBlock {
+            privateContext.performBlockAndWait {
                 // Code in here is now running "in the background" and can safely
                 // do anything in privateContext.
                 // This is where you will create your entities and save them.
@@ -35,10 +33,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                 let roundLongitude = round(longitude * 100 )/100
                 
                 
-                // Ideally, I would save the number of pages for the search results  for the given latitude/longitude in core data so I can do a random on page 1 to the max number of pages instead of a fixed number of 10
-                // generate a random number per page
-                let myRandom = arc4random_uniform(10) + 1
-                
+               
                 // Fetch Flickr pictures baesd on geolocation
                 let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=12")! ;
                 
@@ -53,6 +48,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                 //                        print(jsonResult)
                                 if let items = jsonResult["photos"] as? NSDictionary {
                                     
+                                    print("Number of pages \(items["pages"])" )
                                     if let pages = items["pages"] as? NSObject {
                                         if pages  == 0 {
                                             
@@ -85,63 +81,65 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                             documentsDirectory = paths[0] as? String
                                                             
                                                             let savePath = documentsDirectory! + "/\(imageID).jpg"
+//                                                            print("savePath \(savePath)" )
                                                             //                                                    print(savePath)
                                                             //save the images to the savePath/Document Directory
                                                             NSFileManager.defaultManager().createFileAtPath(savePath, contents: imageData, attributes: nil)
                                                             
-                                                            
-                                                            // Find the Pin to which the images should be downloaded and associated with
-                                                            let request = NSFetchRequest(entityName: "Pin")
-                                                            //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
-                                                            let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
-                                                            let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
-                                                            request.returnsObjectsAsFaults = false
-                                                            
-                                                            request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
-                                                            
-                                                            do {
-                                                                
-                                                                let results = try context.executeFetchRequest(request)
-                                                                
-                                                                
-                                                                
-                                                                if results.count > 0 {
-                                                                    
-                                                                    //                                                            print(results)
-                                                                    
-                                                                    let pages = results[0] as! NSManagedObject
-                                                                    
-                                                                    pages.setValue(items["pages"]!, forKey: "pages")
-                                                                    
-                                                                    
-                                                                    for result in results as! [NSManagedObject] {
-                                                                        //                                                                print(result)
-                                                                        let newPhoto = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
-                                                                        // save image id to imageURL Photo Entity
-                                                                        //                                                                print("/\(imageID).jpg")
-                                                                        newPhoto.setValue("/\(imageID).jpg", forKey: "imageURL")
-                                                                        
-                                                                        let photos = result.mutableSetValueForKey("photos")
-                                                                        
-                                                                        if let photosObject = photos as? NSMutableSet {
-                                                                            
-                                                                            do {
-                                                                                try photosObject.addObject(newPhoto)
-                                                                                
-                                                                            } catch {
-                                                                                print("There was a problem saving")
-                                                                            }
-                                                                        }
-                                                                        
-                                                                    }
-                                                                }
-                                                            } catch {
-                                                            }
+     
                                                             
                                                             
                                                             let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
                                                             privateContext.persistentStoreCoordinator = context.persistentStoreCoordinator
-                                                            privateContext.performBlock {
+                                                            privateContext.performBlockAndWait {
+                                                                // Find the Pin to which the images should be downloaded and associated with
+                                                                let request = NSFetchRequest(entityName: "Pin")
+                                                                //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
+                                                                let firstPredicate = NSPredicate(format: "latitude == \(latitude)")
+                                                                let secondPredicate = NSPredicate(format: "longitude == \(longitude)")
+                                                                request.returnsObjectsAsFaults = false
+                                                                
+                                                                request.predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
+                                                                
+                                                                do {
+                                                                    
+                                                                    let results = try context.executeFetchRequest(request)
+                                                                    
+                                                                    
+                                                                    
+                                                                    if results.count > 0 {
+                                                                        
+                                                                        //                                                            print(results)
+                                                                        
+                                                                        let pages = results[0] as! NSManagedObject
+                                                                        
+                                                                        pages.setValue(items["pages"]!, forKey: "pages")
+                                                                        
+                                                                        
+                                                                        for result in results as! [NSManagedObject] {
+                                                                            //                                                                print(result)
+                                                                            let newPhoto = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
+                                                                            // save image id to imageURL Photo Entity
+                                                                            //                                                                print("/\(imageID).jpg")
+                                                                            newPhoto.setValue("/\(imageID).jpg", forKey: "imageURL")
+                                                                            
+                                                                            let photos = result.mutableSetValueForKey("photos")
+                                                                            
+                                                                            if let photosObject = photos as? NSMutableSet {
+                                                                                
+                                                                                do {
+                                                                                    try photosObject.addObject(newPhoto)
+                                                                                    
+                                                                                } catch {
+                                                                                    print("There was a problem saving")
+                                                                                }
+                                                                            }
+                                                                            
+                                                                        }
+                                                                    }
+                                                                } catch {
+                                                                }
+                                                                
                                                                 do {
                                                                     
                                                                     try context.save()
@@ -215,7 +213,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
         
         let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
         privateContext.persistentStoreCoordinator = context.persistentStoreCoordinator
-        privateContext.performBlock {
+        privateContext.performBlockAndWait {
             // Code in here is now running "in the background" and can safely
             // do anything in privateContext.
             // This is where you will create your entities and save them.
@@ -242,7 +240,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                         //                        print(result)
                         //                        print(result.valueForKey("photos")! )
                         // check to see if there's any photos under **this** pin, if not do a fetch image
-                        print("Number of pages \(result.valueForKey("pages"))" )
+//                        print("Number of pages \(result.valueForKey("pages"))" )
                         
                         if let pageNum = result.valueForKey("pages") as? Int {
                             pages = pageNum
@@ -262,13 +260,19 @@ class FetchImages: UIViewController, MKMapViewDelegate {
             
             // Pulls up the number of pages associated with each pin and do a random from page 1 to the max number of pages
              convertedPages = UInt32(pages)
-             myRandom = arc4random_uniform(convertedPages) + 1
+            
+            //Flickr limits photos per query of 4000. Take 4000 divided number of pictures per page(12)
+             myRandom = arc4random_uniform(min(convertedPages, 100))
+            
+            
             
             print("This is random page \(myRandom)")
             
         }
             // Fetch Flickr pictures baesd on geolocation
             let url = NSURL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6cd8800d04b7e3edca0524f5b429042e&lat=\(roundLatitude)&lon=\(roundLongitude)&extras=url_s&format=json&nojsoncallback=1&per_page=12&page=\(myRandom)")! ;
+        
+            print(url)
             
             let task = NSURLSession.sharedSession().dataTaskWithURL(url){(data, response, error) -> Void in
                 if let data = data {
@@ -283,9 +287,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                 
                                 print(items["pages"])
                                 
-                                
-                                
-                                
+
                                 if let photoItems = items["photo"] as? NSArray {
                                     
                                     for item in photoItems {
@@ -315,7 +317,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                         
                                                         let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
                                                         privateContext.persistentStoreCoordinator = context.persistentStoreCoordinator
-                                                        privateContext.performBlock {
+                                                        privateContext.performBlockAndWait {
                                                             // Find the Pin to which the images should be downloaded and associated with
                                                             let request = NSFetchRequest(entityName: "Pin")
                                                             //        request.predicate = NSPredicate(format: "latitude = %@", latitude)
@@ -339,9 +341,7 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                                         
                                                                         if let photos = result.mutableSetValueForKey("photos") as? NSMutableSet{
                                                                             if let photosObject = photos as? NSMutableSet {
-                                                                                let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
-                                                                                privateContext.persistentStoreCoordinator = context.persistentStoreCoordinator
-                                                                                privateContext.performBlock {
+                                              
                                                                                     // Code in here is now running "in the background" and can safely
                                                                                     // do anything in privateContext.
                                                                                     // This is where you will create your entities and save them.
@@ -351,13 +351,13 @@ class FetchImages: UIViewController, MKMapViewDelegate {
                                                                                         try context.save()
                                                                                         
                                                                                         
-                                                                                        //   print("Saved Successfully")
+//                                                                                           print("Saved Successfully")
                                                                                     } catch {
                                                                                         print("There was a problem saving")
                                                                                     }
                                                                                     
                                                                                     
-                                                                                }
+                                                                                
                                                                                 
                                                                             }
                                                                         }
